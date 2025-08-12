@@ -1,0 +1,49 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "theme": "system",
+  "autoupdate": true,
+  "model": "openrouter/@preset/opencode-large",
+  "small_model": "openrouter/@preset/opencode-small",
+  "provider": {
+    "openrouter": {
+      "models": {
+        "@preset/opencode-large": {},
+        "@preset/opencode-medium": {},
+        "@preset/opencode-small": {}
+      }
+    }
+  },
+  "formatter": {
+    "eslint": {
+      "command": ["npx", "eslint", "--fix", "$FILE"],
+      "extensions": [
+        ".js",
+        ".jsx",
+        ".mjs",
+        ".cjs",
+        ".ts",
+        ".tsx",
+        ".mts",
+        ".cts",
+        ".html",
+        ".htm",
+        ".css",
+        ".scss",
+        ".sass",
+        ".less",
+        ".vue",
+        ".svelte",
+        ".json",
+        ".jsonc",
+        ".yaml",
+        ".yml",
+        ".toml",
+        ".xml",
+        ".md",
+        ".mdx",
+        ".graphql",
+        ".gql"
+      ]
+    }
+  }
+}

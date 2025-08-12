@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+stow -v -R --no-folding --ignore '(^|/)README\.md$' -t / -d "$DIR" system || true
+stow -v -R --no-folding --ignore '(^|/)README\.md$' -t "$HOME" -d "$DIR" user || true
