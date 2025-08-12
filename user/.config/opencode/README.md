@@ -21,3 +21,11 @@ Or, directly edit the `~/.local/share/opencode/auth.json` (or
   }
 }
 ```
+
+## OpenRouter Presets
+
+This setup depends on 3 OpenRouter Presets existing:
+
+- `@preset/opencode-large`
+- `@preset/opencode-medium`
+- `@preset/opencode-small`
