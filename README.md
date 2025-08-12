@@ -26,6 +26,9 @@ Then, setup the dotfiles by running
 bash ~/dev/dotfiles/install
 ```
 
+This will symlink the `user` folder into `~`, and the `system` folder into `/`.
+You will need to grant admin privileges to run this command.
+
 ## Included
 
 - [OpenCode](https://opencode.ai)
