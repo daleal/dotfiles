@@ -1,5 +1,7 @@
 # Dotfiles
 
+These are the dotfiles for my macOS configuration
+
 ## Cloning
 
 Clone this repo in `~/dev/dotfiles`
@@ -23,3 +25,8 @@ Then, setup the dotfiles by running
 ```bash
 bash ~/dev/dotfiles/install
 ```
+
+## Included
+
+- [OpenCode](https://opencode.ai)
+- International english keyboard with AltGr dead keys
