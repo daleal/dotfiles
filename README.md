@@ -29,7 +29,14 @@ bash ~/dev/dotfiles/install
 This will symlink the `user` folder into `~`, and the `system` folder into `/`.
 You will need to grant admin privileges to run this command.
 
+## Manual Installation
+
+Some configs need to be manually installed. Refer to
+[the manual README](./manual/README.md) for more information.
+
 ## Included
 
 - [OpenCode](https://opencode.ai)
 - International english keyboard with AltGr dead keys
+- `git` configs and extensions
+- Terminal profiles
