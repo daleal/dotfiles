@@ -35,4 +35,14 @@
       ],
     },
   },
+  "mcp": {
+    "linear": {
+      "type": "local",
+      "command": ["npx", "mcp-remote", "https://mcp.linear.app/mcp"],
+      "enabled": true
+    }
+  },
+  "tools": {
+    "linear": false
+  }
 }
