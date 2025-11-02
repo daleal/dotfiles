@@ -46,5 +46,16 @@
         "source.fixAll.eslint": true
       }
     }
+  },
+  "lsp": {
+    "texlab": {
+      "settings": {
+        "texlab": {
+          "build": {
+            "onSave": true
+          }
+        }
+      }
+    }
   }
 }
