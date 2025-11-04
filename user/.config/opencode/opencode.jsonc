@@ -35,6 +35,12 @@
       ],
     },
   },
+  "lsp": {
+    "sorbet": {
+      "command": ["bundle", "exec", "srb", "tc", "--lsp", "--disable-watchman"],
+      "extensions": [".rb"]
+    }
+  },
   "mcp": {
     "linear": {
       "type": "local",
