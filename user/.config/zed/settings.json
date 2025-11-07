@@ -47,7 +47,7 @@
       }
     },
     "Ruby": {
-      "language_servers": ["ruby-lsp", "sorbet", "rubocop", "!solargraph"],
+      "language_servers": ["sorbet", "rubocop", "!ruby-lsp", "!solargraph"],
       "formatter": ["language_server"]
     }
   },

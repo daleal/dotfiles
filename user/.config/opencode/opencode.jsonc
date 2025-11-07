@@ -38,8 +38,9 @@
   "lsp": {
     "sorbet": {
       "command": ["bundle", "exec", "srb", "tc", "--lsp", "--disable-watchman"],
-      "extensions": [".rb"]
-    }
+      "extensions": [".rb", ".rbi"]
+    },
+    "ruby-lsp": { "disabled": true },
   },
   "mcp": {
     "linear": {
