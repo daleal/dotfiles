@@ -2,3 +2,9 @@ theme = One Double Dark
 
 window-width = 150
 window-height = 35
+
+# OpenCode requires a specific mapping for international
+# or macos-option-as-alt = true, but that disables special characters
+# with the option modifier, so we map the backspace and delete instead
+keybind = alt+backspace=text:\x1b\x7f
+keybind = alt+delete=esc:d
