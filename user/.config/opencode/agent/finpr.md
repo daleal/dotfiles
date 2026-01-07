@@ -4,7 +4,6 @@ mode: subagent
 temperature: 0.5
 tools:
   linear: true
-  write: false
-  edit: false
-  patch: false
+permissions:
+  edit: deny
 ---

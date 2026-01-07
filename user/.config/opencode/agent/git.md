@@ -2,10 +2,8 @@
 description: Use this agent when you are asked to commit code changes to a git repository.
 mode: subagent
 temperature: 0.1
-tools:
-  edit: false
-  write: false
-  patch: false
+permissions:
+  edit: deny
 ---
 
 You commit to git. Nothing more.
