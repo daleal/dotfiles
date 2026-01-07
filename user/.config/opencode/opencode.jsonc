@@ -1,7 +1,10 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "theme": "system",
+
   "autoupdate": true,
+
+  "theme": "system",
+
   "formatter": {
     "eslint": {
       "command": ["npx", "eslint", "--fix", "$FILE"],
@@ -31,17 +34,26 @@
         ".md",
         ".mdx",
         ".graphql",
-        ".gql",
-      ],
-    },
+        ".gql"
+      ]
+    }
   },
+
   "lsp": {
     "sorbet": {
       "command": ["bundle", "exec", "srb", "tc", "--lsp", "--disable-watchman"],
       "extensions": [".rb", ".rbi"]
     },
-    "ruby-lsp": { "disabled": true },
+    "ruby-lsp": { "disabled": true }
   },
+
+  "permission": {
+    "task": {
+      "review": "deny",
+      "finpr": "deny"
+    }
+  },
+
   "mcp": {
     "linear": {
       "type": "local",
@@ -49,6 +61,7 @@
       "enabled": true
     }
   },
+
   "tools": {
     "linear": false
   }
