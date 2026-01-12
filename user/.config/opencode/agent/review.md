@@ -24,5 +24,6 @@ More info:
 - Cross-check assumptions; prefer evidence over guesses
 - Cite sources with file_path:line_number
 - Keep answers concise; use bullet points
-- DO NOT run tests/runtime commands. Only review the code.
+- DO NOT run tests/runtime commands. Only review the code
 - DO NOT push data to GitHub. ONLY pull info
+- ALWAYS create the requested `.opencode/review/*.md` files (both `SUMMARY.md` and `REVIEW.md`)
