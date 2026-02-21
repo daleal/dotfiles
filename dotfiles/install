@@ -11,26 +11,47 @@ select_profile "$REPO_DIR" "${1:-}"
 
 clear_conflicts() {
   local target_dir="$1"
-  local use_sudo="$2"
-  shift 2
+  shift
 
   local output
-  output="$($use_sudo stow --no "$@" 2>&1 || true)"
+  output="$(stow --no "$@" 2>&1 || true)"
   local conflicts
-  conflicts="$(echo "$output" | grep 'existing target is not owned by stow:' | sed 's/.*existing target is not owned by stow: //')"
+  conflicts="$(echo "$output" | grep 'existing target is not owned by stow:' | sed 's/.*existing target is not owned by stow: //' || true)"
 
   if [[ -n "$conflicts" ]]; then
     while IFS= read -r file; do
       local full_path="$target_dir/$file"
       if [[ -e "$full_path" || -L "$full_path" ]]; then
         echo "  Removing conflicting file: $file"
-        $use_sudo rm -f "$full_path"
+        rm -f "$full_path"
+      fi
+    done <<< "$conflicts"
+  fi
+}
+
+clear_conflicts_sudo() {
+  local target_dir="$1"
+  shift
+
+  local output
+  output="$(sudo stow --no "$@" 2>&1 || true)"
+  local conflicts
+  conflicts="$(echo "$output" | grep 'existing target is not owned by stow:' | sed 's/.*existing target is not owned by stow: //' || true)"
+
+  if [[ -n "$conflicts" ]]; then
+    while IFS= read -r file; do
+      local full_path="$target_dir/$file"
+      if [[ -e "$full_path" || -L "$full_path" ]]; then
+        echo "  Removing conflicting file: $file"
+        sudo rm -f "$full_path"
       fi
     done <<< "$conflicts"
   fi
 }
 
 STOW_ARGS=(-R --no-folding --override='.*' --ignore "$STOW_IGNORE")
+
+# --- Stow each layer in order ---
 
 for layer in "${PROFILE_LAYERS[@]}"; do
   LAYER_DIR="$DIR/layers/$layer"
@@ -43,14 +64,14 @@ for layer in "${PROFILE_LAYERS[@]}"; do
   if [[ -d "$LAYER_DIR/user" ]]; then
     echo ""
     echo "Stowing user configs from layer '$layer'..."
-    clear_conflicts "$HOME" "" "${STOW_ARGS[@]}" -t "$HOME" -d "$LAYER_DIR" user
+    clear_conflicts "$HOME" "${STOW_ARGS[@]}" -t "$HOME" -d "$LAYER_DIR" user
     stow -v "${STOW_ARGS[@]}" -t "$HOME" -d "$LAYER_DIR" user || true
   fi
 
   if [[ -d "$LAYER_DIR/system" ]]; then
     echo ""
     echo "Stowing system configs from layer '$layer'..."
-    clear_conflicts "/" "sudo" "${STOW_ARGS[@]}" -t / -d "$LAYER_DIR" system
+    clear_conflicts_sudo "/" "${STOW_ARGS[@]}" -t / -d "$LAYER_DIR" system
     sudo stow -v "${STOW_ARGS[@]}" -t / -d "$LAYER_DIR" system || true
   fi
 done
