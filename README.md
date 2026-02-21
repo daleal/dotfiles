@@ -60,7 +60,7 @@ dotfiles/
       user/             # Stowed into ~
       system/           # Stowed into /
 profiles/
-  <name>.conf             # os=macos|linux, layers=base,mac,...
+  <name>.conf           # os=macos|linux, layers=base,mac,...
 packages/
   layers/
     <layer>             # Package list (one per line)
