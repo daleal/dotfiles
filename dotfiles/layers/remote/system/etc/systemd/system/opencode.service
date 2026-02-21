@@ -1,0 +1,14 @@
+[Unit]
+Description=OpenCode Server
+
+[Service]
+ExecStart=/root/.opencode/bin/opencode serve --hostname 0.0.0.0 --port 4096
+Restart=on-failure
+User=root
+Environment=HOME=/root
+Environment=XDG_CONFIG_HOME=/root/.config
+Environment=GH_CONFIG_DIR=/root/.config/gh
+Environment=PATH=/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin:/root/.bun/bin
+
+[Install]
+WantedBy=default.target

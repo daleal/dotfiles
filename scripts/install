@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+shopt -s nullglob
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(dirname "$DIR")"
+
+source "$REPO_DIR/lib/profile.sh"
+select_profile "$REPO_DIR" "${1:-}"
+
+for layer in "${PROFILE_LAYERS[@]}"; do
+  LAYER_SCRIPTS="$DIR/layers/$layer"
+  if [[ -d "$LAYER_SCRIPTS" ]]; then
+    for script in "$LAYER_SCRIPTS"/*; do
+      [[ -x "$script" ]] || continue
+      echo ""
+      echo "Running '$(basename "$script")' from layer '$layer'..."
+      "$script"
+    done
+  fi
+done
+
+echo ""
+echo "Done! Scripts for profile '$PROFILE' executed (layers: ${PROFILE_LAYERS[*]})."

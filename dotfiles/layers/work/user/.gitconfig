@@ -1,0 +1,15 @@
+[credential]
+	helper = osxkeychain
+[user]
+	name = daleal
+	email = daniel@fintoc.com
+[core]
+	editor = nano
+	pager = less
+[pager]
+	branch = false
+[init]
+	defaultBranch = main
+[absorb]
+	maxStack = 20
+	oneFixupPerCommit = true

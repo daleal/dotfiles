@@ -7,7 +7,7 @@
 
   "formatter": {
     "eslint": {
-      "command": ["npx", "eslint", "--fix", "$FILE"],
+      "command": ["bunx", "eslint", "--fix", "$FILE"],
       "extensions": [
         ".js",
         ".jsx",

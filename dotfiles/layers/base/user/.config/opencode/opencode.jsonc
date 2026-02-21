@@ -1,0 +1,55 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "autoupdate": true,
+
+  "theme": "system",
+
+  "formatter": {
+    "eslint": {
+      "command": ["bunx", "eslint", "--fix", "$FILE"],
+      "extensions": [
+        ".js",
+        ".jsx",
+        ".mjs",
+        ".cjs",
+        ".ts",
+        ".tsx",
+        ".mts",
+        ".cts",
+        ".html",
+        ".htm",
+        ".css",
+        ".scss",
+        ".sass",
+        ".less",
+        ".vue",
+        ".svelte",
+        ".json",
+        ".jsonc",
+        ".yaml",
+        ".yml",
+        ".toml",
+        ".xml",
+        ".md",
+        ".mdx",
+        ".graphql",
+        ".gql"
+      ]
+    }
+  },
+
+  "lsp": {
+    "sorbet": {
+      "command": ["bundle", "exec", "srb", "tc", "--lsp", "--disable-watchman"],
+      "extensions": [".rb", ".rbi"]
+    },
+    "ruby-lsp": { "disabled": true }
+  },
+
+  "permission": {
+    "task": {
+      "review": "deny"
+    }
+  }
+}

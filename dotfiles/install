@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(dirname "$DIR")"
+STOW_IGNORE='(^|/)README\.md$'
+
+source "$REPO_DIR/lib/profile.sh"
+select_profile "$REPO_DIR" "${1:-}"
+
+clear_conflicts() {
+  local target_dir="$1"
+  local use_sudo="$2"
+  shift 2
+
+  local output
+  output="$($use_sudo stow --no "$@" 2>&1 || true)"
+  local conflicts
+  conflicts="$(echo "$output" | grep 'existing target is not owned by stow:' | sed 's/.*existing target is not owned by stow: //')"
+
+  if [[ -n "$conflicts" ]]; then
+    while IFS= read -r file; do
+      local full_path="$target_dir/$file"
+      if [[ -e "$full_path" || -L "$full_path" ]]; then
+        echo "  Removing conflicting file: $file"
+        $use_sudo rm -f "$full_path"
+      fi
+    done <<< "$conflicts"
+  fi
+}
+
+STOW_ARGS=(-R --no-folding --override='.*' --ignore "$STOW_IGNORE")
+
+for layer in "${PROFILE_LAYERS[@]}"; do
+  LAYER_DIR="$DIR/layers/$layer"
+
+  if [[ ! -d "$LAYER_DIR" ]]; then
+    echo "Warning: layer '$layer' not found, skipping." >&2
+    continue
+  fi
+
+  if [[ -d "$LAYER_DIR/user" ]]; then
+    echo ""
+    echo "Stowing user configs from layer '$layer'..."
+    clear_conflicts "$HOME" "" "${STOW_ARGS[@]}" -t "$HOME" -d "$LAYER_DIR" user
+    stow -v "${STOW_ARGS[@]}" -t "$HOME" -d "$LAYER_DIR" user || true
+  fi
+
+  if [[ -d "$LAYER_DIR/system" ]]; then
+    echo ""
+    echo "Stowing system configs from layer '$layer'..."
+    clear_conflicts "/" "sudo" "${STOW_ARGS[@]}" -t / -d "$LAYER_DIR" system
+    sudo stow -v "${STOW_ARGS[@]}" -t / -d "$LAYER_DIR" system || true
+  fi
+done
+
+echo ""
+echo "Done! Profile '$PROFILE' installed (layers: ${PROFILE_LAYERS[*]})."

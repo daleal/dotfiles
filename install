@@ -3,5 +3,18 @@
 set -euo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-sudo stow -v -R --no-folding --ignore '(^|/)README\.md$' -t / -d "$DIR" system || true
-stow -v -R --no-folding --ignore '(^|/)README\.md$' -t "$HOME" -d "$DIR" user || true
+
+source "$DIR/lib/profile.sh"
+select_profile "$DIR" "${1:-}"
+
+echo ""
+echo "=============== Installing packages ==============="
+bash "$DIR/packages/install" "$PROFILE"
+
+echo ""
+echo "=============== Running scripts ==============="
+bash "$DIR/scripts/install" "$PROFILE"
+
+echo ""
+echo "=============== Installing dotfiles ==============="
+bash "$DIR/dotfiles/install" "$PROFILE"
