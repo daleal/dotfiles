@@ -51,12 +51,11 @@ clear_conflicts_sudo() {
 
 STOW_ARGS=(-R --no-folding --override='.*' --ignore "$STOW_IGNORE")
 
-# --- Stow each layer in order ---
-
 for layer in "${PROFILE_LAYERS[@]}"; do
   LAYER_DIR="$DIR/layers/$layer"
 
   if [[ ! -d "$LAYER_DIR" ]]; then
+    echo ""
     echo "Warning: layer '$layer' not found, skipping." >&2
     continue
   fi
