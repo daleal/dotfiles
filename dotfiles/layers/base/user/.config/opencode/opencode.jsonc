@@ -3,8 +3,6 @@
 
   "autoupdate": true,
 
-  "theme": "system",
-
   "formatter": {
     "eslint": {
       "command": ["bunx", "eslint", "--fix", "$FILE"],
