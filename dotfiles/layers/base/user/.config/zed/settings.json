@@ -25,6 +25,7 @@
   // predictions
   "show_edit_predictions": true,
   "edit_predictions": {
+    "provider": "copilot",
     "mode": "eager"
   },
 
