@@ -7,6 +7,19 @@
   },
   "icon_theme": "Material Icon Theme",
 
+  // extensions
+  "auto_install_extensions": {
+    // theme-related
+    "one-dark-pro": true,
+    "material-icon-theme": true,
+
+    // code-related
+    "html": true,
+    "jsonl": true,
+    "latex": true,
+    "vue": true,
+  },
+
   // telemetry
   "telemetry": {
     "diagnostics": false,
