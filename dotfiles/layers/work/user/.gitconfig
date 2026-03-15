@@ -4,7 +4,7 @@
 	name = Daniel Leal
 	email = daniel@fintoc.com
 [core]
-	editor = nano
+	editor = zed --wait
 	pager = less
 [pager]
 	branch = false

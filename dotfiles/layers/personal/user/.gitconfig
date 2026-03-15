@@ -4,7 +4,7 @@
 	name = Daniel Leal
 	email = tools@daleal.dev
 [core]
-	editor = nano
+	editor = zed --wait
 	pager = less
 [pager]
 	branch = false
