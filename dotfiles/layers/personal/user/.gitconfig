@@ -1,7 +1,7 @@
 [credential]
 	helper = osxkeychain
 [user]
-	name = daleal
+	name = Daniel Leal
 	email = tools@daleal.dev
 [core]
 	editor = nano
