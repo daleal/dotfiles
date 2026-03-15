@@ -1,15 +1,11 @@
 {
   // theme
-  "icon_theme": {
-    "mode": "dark",
-    "light": "Zed (Default)",
-    "dark": "Zed (Default)"
-  },
   "theme": {
     "mode": "dark",
     "light": "One Light",
-    "dark": "One Dark"
+    "dark": "One Dark Pro"
   },
+  "icon_theme": "Material Icon Theme",
 
   // telemetry
   "telemetry": {
