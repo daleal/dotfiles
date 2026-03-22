@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SHELL_RCS=(~/.bashrc ~/.zshrc)
+COMMENT='# Source shell aliases managed by dotfiles'
+SNIPPET='for f in ~/.config/shell/aliases.d/*.sh; do source "$f"; done'
+
+for rc in "${SHELL_RCS[@]}"; do
+  if ! grep -qF "$SNIPPET" "$rc" 2>/dev/null; then
+    printf '\n%s\n%s\n' "$COMMENT" "$SNIPPET" >> "$rc"
+  fi
+done

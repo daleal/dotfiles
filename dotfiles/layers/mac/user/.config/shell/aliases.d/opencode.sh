@@ -1,0 +1,3 @@
+opencode() {
+  caffeinate -i opencode "$@"
+}
