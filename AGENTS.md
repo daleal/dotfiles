@@ -41,7 +41,7 @@ Config files mirror their target path. Example: ghostty config lives at
 | `base`     | Cross-platform configs (opencode, zed, etc.)             |
 | `mac`      | macOS-only (ghostty, keyboard layout)                    |
 | `personal` | Personal identity (.gitconfig with personal email)       |
-| `work`     | Work identity, work-specific tooling (Linear MCP, finpr) |
+| `work`     | Work identity, work-specific tooling (Linear MCP, pr) |
 | `linux`    | Linux-only packages                                      |
 | `remote`   | Remote server (systemd services, nano as editor)         |
 

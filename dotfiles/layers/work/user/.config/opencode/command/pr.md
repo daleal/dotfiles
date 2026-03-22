@@ -1,6 +1,6 @@
 ---
 description: Creates a PR with the Fintoc PR style
-agent: finpr
+agent: pr
 ---
 
 <user-instructions>
