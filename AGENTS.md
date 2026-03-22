@@ -63,3 +63,7 @@ identity-specific things.
 - **New layer**: create dir under `dotfiles/layers/<name>/` with `user/` and/or
   `system/`, then add it to relevant profile(s)
 - **New profile**: create `profiles/<name>.conf` with `os=` and `layers=`
+- **New shell alias/function**: add a `.sh` file to
+  `dotfiles/layers/<layer>/user/.config/shell/aliases.d/`. These are sourced
+  automatically by a snippet injected into shell rc files by the
+  `scripts/layers/base/shell-aliases` install script.
