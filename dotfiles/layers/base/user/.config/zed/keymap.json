@@ -1,7 +1,8 @@
 [
   {
     "bindings": {
-      "cmd-shift-c": "workspace::CopyRelativePath"
+      "cmd-shift-c": "workspace::CopyRelativePath",
+      "cmd-k cmd-left": "project_panel::CollapseAllEntries"
     }
   }
 ]
