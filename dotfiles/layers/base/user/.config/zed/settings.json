@@ -32,6 +32,25 @@
   "buffer_font_size": 11,
   "tab_size": 2,
 
+  "cli_default_open_behavior": "new_window",
+  "project_panel": {
+    "dock": "left"
+  },
+  "outline_panel": {
+    "dock": "left"
+  },
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "agent": {
+    "dock": "right",
+    "favorite_models": [],
+    "model_parameters": []
+  },
+  "git_panel": {
+    "dock": "left"
+  },
+
   // predictions
   "show_edit_predictions": true,
   "edit_predictions": {
