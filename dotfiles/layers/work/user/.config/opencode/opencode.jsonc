@@ -57,6 +57,11 @@
       "type": "local",
       "command": ["npx", "mcp-remote", "https://mcp.linear.app/mcp"],
       "enabled": true
+    },
+    "notion": {
+      "type": "remote",
+      "url": "https://mcp.notion.com/mcp",
+      "oauth": {}
     }
   },
 
