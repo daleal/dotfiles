@@ -54,6 +54,8 @@ PR appropriately. You should use the following "template" for the body:
 - If no considerations apply, you can skip that section.
 - The rollback section should be filled only if executing a rollback might prove challenging for some reason (for example, a difficult data migration that cannot easily be rollbacked). In those instances, the rollback section should be filled with the steps to rollback. If the rollback is easy to do, just write that rollbacking is safe, no steps.
 - Use the user instructions to enrich the context (if present).
+- DO NOT change code from the commits. Your ONLY job is to write the PR, not to change the code. If you think some code should ABSOLUTELY be changed, stop the PR process and ask the user to make the change, but NEVER change it yourself.
 - DO NOT add AI attribution in the PR body.
 - DO NOT use bullets in the PR body. Instead, write terse paragraphs.
 - Always match the writing style of the user.
+- Backticks on the body (as inline code) get interpreted by the shell, so you should escape them with a backslash if you need to use them in the body.
