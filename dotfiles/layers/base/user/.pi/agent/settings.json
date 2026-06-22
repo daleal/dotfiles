@@ -1,0 +1,12 @@
+{
+  "theme": "one-dark-pro",
+  "defaultProjectTrust": "always",
+  "quietStartup": true,
+  "enableInstallTelemetry": false,
+  "enableAnalytics": false,
+  "packages": [
+    "npm:pi-lens",
+    "npm:@ff-labs/pi-fff"
+  ],
+  "lastChangelogVersion": "0.79.9"
+}
