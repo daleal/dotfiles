@@ -69,18 +69,18 @@
     "linear": false
   },
 
-    "provider": {
-      "openrouter": {
-        "models": {
-          "~z-ai/glm-5.2": {
-            "options": {
-              "provider": {
-                "order": ["fireworks", "friendli"],
-                "allow_fallbacks": false,
-              },
+  "provider": {
+    "openrouter": {
+      "models": {
+        "z-ai/glm-5.2": {
+          "options": {
+            "provider": {
+              "order": ["fireworks", "friendli"],
+              "allow_fallbacks": false,
             },
           },
         },
       },
     },
+  },
 }

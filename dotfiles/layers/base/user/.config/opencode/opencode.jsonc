@@ -54,7 +54,7 @@
   "provider": {
     "openrouter": {
       "models": {
-        "~z-ai/glm-5.2": {
+        "z-ai/glm-5.2": {
           "options": {
             "provider": {
               "order": ["fireworks", "friendli"],
