@@ -40,12 +40,16 @@ PR appropriately. You should use the following "template" for the body:
 
 ## Tests
 
+Tests unitarios
+
 ## Consideraciones
 
 ## Rollback
 ¿Es seguro hacer rollback? Sí/No
 ¿Cuáles son los pasos para hacer rollback?
 ```
+
+Literally write "Tests unitarios", no need to describe every test you added/changed.
 
 #### Guardrails
 
