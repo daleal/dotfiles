@@ -60,6 +60,7 @@
 
   // behavior
   "formatter": [],
+  "format_on_save": "on",
   "languages": {
     "JavaScript": {
       "code_actions_on_format": {
