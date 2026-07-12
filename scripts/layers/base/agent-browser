@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+agent-browser install --with-deps && agent-browser upgrade

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+AGENT_BROWSER_SESSION="$(agent-browser session id --scope worktree --prefix opencode)" agent-browser "$@"
