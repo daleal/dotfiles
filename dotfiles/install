@@ -16,7 +16,9 @@ clear_conflicts() {
   local output
   output="$(stow --no "$@" 2>&1 || true)"
   local conflicts
-  conflicts="$(echo "$output" | grep 'existing target is not owned by stow:' | sed 's/.*existing target is not owned by stow: //' || true)"
+  conflicts="$(printf '%s\n' "$output" | sed -n \
+    -e 's/.*existing target is not owned by stow: //p' \
+    -e 's/.* over existing target \(.*\) since .*/\1/p')"
 
   if [[ -n "$conflicts" ]]; then
     while IFS= read -r file; do
@@ -36,7 +38,9 @@ clear_conflicts_sudo() {
   local output
   output="$(sudo stow --no "$@" 2>&1 || true)"
   local conflicts
-  conflicts="$(echo "$output" | grep 'existing target is not owned by stow:' | sed 's/.*existing target is not owned by stow: //' || true)"
+  conflicts="$(printf '%s\n' "$output" | sed -n \
+    -e 's/.*existing target is not owned by stow: //p' \
+    -e 's/.* over existing target \(.*\) since .*/\1/p')"
 
   if [[ -n "$conflicts" ]]; then
     while IFS= read -r file; do

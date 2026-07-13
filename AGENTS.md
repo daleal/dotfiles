@@ -33,6 +33,7 @@ Config files mirror their target path. Example: ghostty config lives at
 - `--no-folding`: creates individual file symlinks, not directory symlinks
 - `--override='.*'`: later layers can override earlier ones
 - README.md files inside layer dirs are ignored by stow
+- Install removes unmanaged target files reported by both old and current GNU Stow diagnostics before retrying
 
 ## Layer responsibilities
 
