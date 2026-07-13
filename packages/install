@@ -21,9 +21,9 @@ install_packages() {
   echo "Installing packages from layer '$layer'..."
 
   if command -v brew &>/dev/null; then
-    brew install $packages
+    brew install --no-ask $packages
   elif command -v apt-get &>/dev/null; then
-    sudo apt-get install -y $packages
+    sudo apt-get install --yes $packages
   else
     echo "No supported package manager found (brew or apt)." >&2
     echo "Packages to install manually: $packages" >&2
