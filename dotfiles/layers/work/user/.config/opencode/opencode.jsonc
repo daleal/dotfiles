@@ -57,17 +57,17 @@
       "type": "local",
       "command": ["npx", "mcp-remote", "https://mcp.linear.app/mcp"],
       "enabled": true
-    },
-    "notion": {
-      "type": "remote",
-      "url": "https://mcp.notion.com/mcp",
-      "oauth": {}
     }
   },
 
   "tools": {
     "linear": false
   },
+
+  "plugin": [
+    "opencode-claude-auth@latest",
+    "@daleal/opencode-workflows@0.1.3",
+  ],
 
   "provider": {
     "openrouter": {
