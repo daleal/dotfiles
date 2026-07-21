@@ -45,23 +45,19 @@
     "ruby-lsp": { "disabled": true }
   },
 
-  "permission": {
-    "task": {
-      "review": "deny",
-      "pr": "deny"
-    }
-  },
-
   "mcp": {
     "linear": {
       "type": "local",
       "command": ["npx", "mcp-remote", "https://mcp.linear.app/mcp"],
-      "enabled": true
-    }
+    },
   },
 
-  "tools": {
-    "linear": false
+  "permission": {
+    "task": {
+      "review": "deny",
+      "pr": "deny",
+    },
+    "linear_*": "deny",
   },
 
   "plugin": [
