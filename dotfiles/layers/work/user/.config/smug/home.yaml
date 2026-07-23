@@ -1,0 +1,7 @@
+session: home
+root: ~/Documents/repos
+attach: true
+
+windows:
+  - name: shell
+    selected: true

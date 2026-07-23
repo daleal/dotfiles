@@ -1,1 +1,1 @@
-command = /bin/zsh -lc 'exec tmux new-session -A -s home'
+command = /bin/zsh -lc 'exec smug start home --attach'
