@@ -1,0 +1,18 @@
+session: luna
+root: ~/Documents/repos/luna
+attach: true
+
+before_start:
+  - make build
+
+windows:
+  - name: shell
+    selected: true
+
+  - name: agent
+    commands:
+      - opencode
+
+  - name: services
+    commands:
+      - make up

@@ -1,0 +1,22 @@
+session: dashboard
+root: ~/Documents/repos/dashboard
+attach: true
+
+before_start:
+  - doppler run -- npm install
+
+windows:
+  - name: shell
+    selected: true
+
+  - name: agent
+    commands:
+      - opencode
+
+  - name: dashboard
+    commands:
+      - doppler run -- npm run dev
+
+  - name: storybook
+    commands:
+      - doppler run -- npm run storybook -- --no-open

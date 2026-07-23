@@ -1,0 +1,22 @@
+session: rails
+root: ~/Documents/repos/fintoc-rails
+attach: true
+
+before_start:
+  - doppler run -- bundle install
+
+windows:
+  - name: shell
+    selected: true
+
+  - name: agent
+    commands:
+      - opencode
+
+  - name: webserver
+    commands:
+      - doppler run -- bundle exec rails server
+
+  - name: databases
+    commands:
+      - docker compose up

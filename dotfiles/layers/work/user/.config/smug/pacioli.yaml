@@ -1,0 +1,30 @@
+session: pacioli
+root: ~/Documents/repos/pacioli
+attach: true
+
+before_start:
+  - doppler run -- bundle install
+
+windows:
+  - name: shell
+    selected: true
+
+  - name: agent
+    commands:
+      - opencode
+
+  - name: webserver-chile
+    commands:
+      - doppler run --config dev_cl -- bundle exec rails server
+
+  - name: webserver-mexico
+    commands:
+      - doppler run --config dev_mx -- bundle exec rails server
+
+  - name: webserver-sandbox
+    commands:
+      - doppler run --config dev_sandbox -- bundle exec rails server
+
+  - name: databases
+    commands:
+      - docker compose up
