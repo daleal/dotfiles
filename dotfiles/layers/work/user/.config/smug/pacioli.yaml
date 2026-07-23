@@ -3,7 +3,7 @@ root: ~/Documents/repos/pacioli
 attach: true
 
 before_start:
-  - docker compose up --detach --wait >/dev/tty 2>&1
+  - docker compose up --detach --wait $(docker compose config --services | grep -vE '^(pubsub|pubsub-pacioli-setup)$') >/dev/tty 2>&1
   - doppler run -- rbenv exec bundle install >/dev/tty 2>&1
 
 stop:
