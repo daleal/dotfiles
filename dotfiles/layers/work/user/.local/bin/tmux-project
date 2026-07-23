@@ -20,14 +20,38 @@ if [ "$action" = clone ]; then
   session=${2:-}
   window=${3:-}
   path=${4:-}
+  window_id=${5:-}
 
-  [ -n "$session" ] && [ -n "$window" ] && [ -n "$path" ] || pause_with_error 'Missing session, window, or path.'
+  [ -n "$session" ] && [ -n "$window" ] && [ -n "$path" ] && [ -n "$window_id" ] || pause_with_error 'Missing session, window, path, or window ID.'
   if [ ! -f "$config_dir/$session.yml" ] && [ ! -f "$config_dir/$session.yaml" ]; then
     tmux new-window -t "$session:" -n "$window" -c "$path"
     exit 0
   fi
 
-  smug start "$session:$window" --attach || pause_with_error "Could not clone configured window: $window"
+  renamed_window_ids=$(tmux list-windows -t "=$session" -F '#{window_id} #{window_name}' | while read -r id name; do
+    [ "$name" = "$window" ] && printf '%s\n' "$id"
+  done)
+  printf '%s\n' "$renamed_window_ids" | grep -qx "$window_id" || pause_with_error "Window not found in session: $window_id"
+  restore_window() {
+    for id in $renamed_window_ids; do
+      tmux rename-window -t "$id" "$window" 2>/dev/null || true
+    done
+  }
+  trap restore_window EXIT HUP INT TERM
+
+  # Smug targets windows by name, so hide duplicate names while it starts.
+  for id in $renamed_window_ids; do
+    tmux rename-window -t "$id" "__smug_clone_${id#@}_$$"
+  done
+  smug start "$session:$window" --detach >/dev/null || pause_with_error "Could not clone configured window: $window"
+  new_window_id=$(tmux list-windows -t "=$session" -F '#{window_id} #{window_name}' | while read -r id name; do
+    [ "$name" = "$window" ] && printf '%s\n' "$id"
+  done)
+  [ -n "$new_window_id" ] || pause_with_error "Could not find cloned window: $window"
+
+  restore_window
+  trap - EXIT HUP INT TERM
+  tmux select-window -t "$new_window_id"
   exit 0
 fi
 
