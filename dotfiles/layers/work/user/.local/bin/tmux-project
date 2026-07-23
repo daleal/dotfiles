@@ -24,12 +24,14 @@ if [ "$action" = clone ]; then
 
   [ -n "$session" ] && [ -n "$window" ] && [ -n "$path" ] && [ -n "$window_id" ] || pause_with_error 'Missing session, window, path, or window ID.'
   if [ ! -f "$config_dir/$session.yml" ] && [ ! -f "$config_dir/$session.yaml" ]; then
-    tmux new-window -t "$session:" -n "$window" -c "$path"
+    tmux new-window -a -t "$window_id" -n "$window" -c "$path"
     exit 0
   fi
 
   renamed_window_ids=$(tmux list-windows -t "=$session" -F '#{window_id} #{window_name}' | while read -r id name; do
-    [ "$name" = "$window" ] && printf '%s\n' "$id"
+    if [ "$name" = "$window" ]; then
+      printf '%s\n' "$id"
+    fi
   done)
   printf '%s\n' "$renamed_window_ids" | grep -qx "$window_id" || pause_with_error "Window not found in session: $window_id"
   restore_window() {
@@ -45,12 +47,15 @@ if [ "$action" = clone ]; then
   done
   smug start "$session:$window" --detach >/dev/null || pause_with_error "Could not clone configured window: $window"
   new_window_id=$(tmux list-windows -t "=$session" -F '#{window_id} #{window_name}' | while read -r id name; do
-    [ "$name" = "$window" ] && printf '%s\n' "$id"
+    if [ "$name" = "$window" ]; then
+      printf '%s\n' "$id"
+    fi
   done)
   [ -n "$new_window_id" ] || pause_with_error "Could not find cloned window: $window"
 
   restore_window
   trap - EXIT HUP INT TERM
+  tmux move-window -a -s "$new_window_id" -t "$window_id"
   tmux select-window -t "$new_window_id"
   exit 0
 fi
