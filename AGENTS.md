@@ -1,6 +1,6 @@
 # Dotfiles repo — composable layers with GNU Stow
 
-Keep the `AGENTS.md` file updated with pertinent changes to the repo and lessons learned from the developers.
+Keep the `AGENTS.md` file updated with pertinent changes to the overarching repo structure and lessons learned from the developers.
 
 ## Architecture
 

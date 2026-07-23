@@ -3,7 +3,11 @@ root: ~/Documents/repos/pacioli
 attach: true
 
 before_start:
-  - doppler run -- bundle install
+  - docker compose up --detach --wait >/dev/tty 2>&1
+  - doppler run -- rbenv exec bundle install >/dev/tty 2>&1
+
+stop:
+  - docker compose down
 
 windows:
   - name: shell
@@ -27,4 +31,4 @@ windows:
 
   - name: databases
     commands:
-      - docker compose up
+      - docker compose logs --follow
