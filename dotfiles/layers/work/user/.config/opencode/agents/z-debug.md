@@ -4,6 +4,7 @@ mode: primary
 color: warning
 permission:
   slack_*: allow
+  gcp-observability_*: allow
   external_directory:
     "~/.local/share/opencode/repos/**": allow
 ---
