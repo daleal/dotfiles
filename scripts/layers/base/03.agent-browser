@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  if brew list --formula agent-browser &>/dev/null; then
+    brew upgrade agent-browser
+  else
+    brew install agent-browser
+  fi
+else
+  bun install --global agent-browser@latest
+fi
+
+if [[ "$(uname -s)" == "Linux" ]]; then
+  agent-browser install --with-deps
+else
+  agent-browser install
+fi

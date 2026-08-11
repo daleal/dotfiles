@@ -19,8 +19,8 @@ Three-phase install pipeline, each independently runnable:
 
 1. **Packages** — `packages/layers/<layer>`: one package name per line (brew on
    macOS, apt on Linux)
-2. **Scripts** — `scripts/layers/<layer>/<name>`: executable bash scripts (run in
-   order)
+2. **Scripts** — `scripts/layers/<layer>/<name>`: executable bash scripts
+   (sourced in filename order so environment changes persist)
 3. **Configs** — `dotfiles/layers/<layer>/user/` stowed into `~`,
    `dotfiles/layers/<layer>/system/` stowed into `/` (with sudo)
 
@@ -42,7 +42,7 @@ Config files mirror their target path. Example: ghostty config lives at
 | `base`     | Cross-platform configs (opencode, zed, etc.)             |
 | `mac`      | macOS-only (ghostty, keyboard layout)                    |
 | `personal` | Personal identity (.gitconfig with personal email)       |
-| `work`     | Work identity, work-specific tooling (Linear MCP, pr) |
+| `work`     | Work identity and tooling (Linear MCP, pr, tmux)         |
 | `linux`    | Linux-only packages                                      |
 | `remote`   | Remote server (systemd services, nano as editor)         |
 

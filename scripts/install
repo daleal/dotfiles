@@ -16,7 +16,7 @@ for layer in "${PROFILE_LAYERS[@]}"; do
       [[ -x "$script" ]] || continue
       echo ""
       echo "Running '$(basename "$script")' from layer '$layer'..."
-      "$script"
+      source "$script"
     done
   fi
 done
