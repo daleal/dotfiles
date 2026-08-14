@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 curl -fsSL https://raw.githubusercontent.com/anomalyco/opencode/v2/install | bash
 
-if ! ss -ltnp 'sport = :4096' 2>/dev/null | grep -q '"opencode2"'; then
+if [[ "$("$HOME/.opencode/bin/opencode2" service status 2>/dev/null)" != "http://127.0.0.1:4096" ]]; then
+  "$HOME/.opencode/bin/opencode2" service set hostname 127.0.0.1
   "$HOME/.opencode/bin/opencode2" service set port 4096
   "$HOME/.opencode/bin/opencode2" service restart
+fi
+
+if ! tailscale serve status 2>/dev/null | grep -Fq '|-- / proxy http://127.0.0.1:4096'; then
+  tailscale serve --bg http://127.0.0.1:4096
 fi
