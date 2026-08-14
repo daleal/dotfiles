@@ -29,6 +29,11 @@ plugins=(git)
 export LANG=C.UTF-8
 
 source "$ZSH/oh-my-zsh.sh"
+
+# Agnoster theme customization
+prompt_context() {
+  prompt_segment black default 'remote'
+}
 EOF
       printf '%s\n\n' "$end_marker"
       [[ ! -f "$zshrc" ]] || cat "$zshrc"
