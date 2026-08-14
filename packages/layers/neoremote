@@ -1,2 +1,6 @@
+bison
+build-essential
 fzf
-tmux
+libevent-dev
+libncurses-dev
+pkg-config
