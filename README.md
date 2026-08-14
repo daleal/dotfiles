@@ -53,11 +53,27 @@ independently:
 All scripts auto-detect the OS, filter matching profiles, and prompt if multiple
 match.
 
+## Uninstall dotfiles
+
+```bash
+bash ~/dev/dotfiles/uninstall
+```
+
+This removes the selected profile's Stow-managed user and system symlinks. It
+does not uninstall packages, undo install scripts, or restore unmanaged files
+that were replaced during installation. The dotfiles step can also be run
+directly:
+
+```bash
+bash ~/dev/dotfiles/dotfiles/uninstall
+```
+
 ## Structure
 
 ```
 dotfiles/
   install                  # Stow a profile's configs
+  uninstall                # Unstow a profile's configs
   layers/
     <layer>/
       user/                # Stowed into ~
@@ -73,6 +89,7 @@ scripts/
 lib/
   profile.sh               # Shared profile selection logic
 install                    # Run all installation phases
+uninstall                  # Uninstall dotfiles only
 ```
 
 ## Adding a new layer

@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(dirname "$DIR")"
+STOW_IGNORE='(^|/)README\.md$'
+
+source "$REPO_DIR/lib/profile.sh"
+select_profile "$REPO_DIR" "${1:-}"
+
+STOW_ARGS=(-D --no-folding --override='.*' --ignore "$STOW_IGNORE")
+
+for ((i = ${#PROFILE_LAYERS[@]} - 1; i >= 0; i--)); do
+  layer="${PROFILE_LAYERS[$i]}"
+  LAYER_DIR="$DIR/layers/$layer"
+
+  if [[ ! -d "$LAYER_DIR" ]]; then
+    echo ""
+    echo "Warning: layer '$layer' not found, skipping." >&2
+    continue
+  fi
+
+  if [[ -d "$LAYER_DIR/user" ]]; then
+    echo ""
+    echo "Unstowing user configs from layer '$layer'..."
+    stow -v "${STOW_ARGS[@]}" -t "$HOME" -d "$LAYER_DIR" user
+  fi
+
+  if [[ -d "$LAYER_DIR/system" ]]; then
+    echo ""
+    echo "Unstowing system configs from layer '$layer'..."
+    sudo stow -v "${STOW_ARGS[@]}" -t / -d "$LAYER_DIR" system
+  fi
+done
+
+echo ""
+echo "Done! Profile '$PROFILE' dotfiles uninstalled (layers: ${PROFILE_LAYERS[*]})."

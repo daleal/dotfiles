@@ -70,3 +70,7 @@ identity-specific things.
   `dotfiles/layers/<layer>/user/.config/shell/aliases.d/`. These are sourced
   automatically by a snippet injected into shell rc files by the
   `scripts/layers/base/shell-aliases` install script.
+
+## Good to know
+
+- Uninstall is intentionally config-only: top-level `uninstall` delegates to `dotfiles/uninstall`, which unstows profile layers in reverse order. It does not remove packages, reverse install scripts, or restore overwritten unmanaged files.
