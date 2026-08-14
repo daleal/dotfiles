@@ -52,8 +52,7 @@ curl -fsSL "$release_url/$archive" \
   -o "$tmp_dir/$archive"
 printf '%s  %s\n' "$checksum" "$tmp_dir/$archive" | sha256sum --check --status
 tar -xzf "$tmp_dir/$archive" -C "$tmp_dir"
-mkdir -p "$HOME/.local/bin"
-install -m 0755 "$tmp_dir/smug" "$HOME/.local/bin/smug"
+sudo install -m 0755 "$tmp_dir/smug" /usr/local/bin/smug
 cleanup_smug_install
 trap - EXIT HUP INT TERM
 unset -f cleanup_smug_install
