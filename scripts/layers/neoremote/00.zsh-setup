@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+setup_zsh() {
+  local zsh_bin current_shell zshrc begin_marker end_marker temp_file
+
+  zsh_bin="$(command -v zsh)"
+  current_shell="$(getent passwd "$(id -un)" | cut -d: -f7)"
+
+  # The login shell change applies to the next session.
+  if [[ "$current_shell" != "$zsh_bin" ]]; then
+    sudo -n usermod --shell "$zsh_bin" "$(id -un)"
+  fi
+
+  zshrc="$HOME/.zshrc"
+  begin_marker='# >>> oh-my-zsh config >>>'
+  end_marker='# <<< oh-my-zsh config <<<'
+
+  if ! grep -qF "$begin_marker" "$zshrc" 2>/dev/null; then
+    temp_file="$(mktemp)"
+    {
+      printf '%s\n' "$begin_marker"
+      cat <<'EOF'
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="agnoster"
+plugins=(git)
+
+export LANG=C.UTF-8
+
+source "$ZSH/oh-my-zsh.sh"
+EOF
+      printf '%s\n\n' "$end_marker"
+      [[ ! -f "$zshrc" ]] || cat "$zshrc"
+    } > "$temp_file"
+    cat "$temp_file" > "$zshrc"
+    rm -f "$temp_file"
+  fi
+
+  if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
+    RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c \
+      "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  fi
+}
+
+setup_zsh
+unset -f setup_zsh
