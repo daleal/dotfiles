@@ -1,2 +1,7 @@
 #!/usr/bin/env bash
 curl -fsSL https://raw.githubusercontent.com/anomalyco/opencode/v2/install | bash
+
+if ! ss -ltnp 'sport = :4096' 2>/dev/null | grep -q '"opencode2"'; then
+  "$HOME/.opencode/bin/opencode2" service set port 4096
+  "$HOME/.opencode/bin/opencode2" service restart
+fi
