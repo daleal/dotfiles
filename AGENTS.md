@@ -7,11 +7,12 @@ Keep the `AGENTS.md` file updated with pertinent changes to the overarching repo
 Profiles (`profiles/<name>.conf`) define an OS and ordered layers. Layers apply
 in order — later layers override earlier ones for the same file path.
 
-| Profile    | OS    | Layers                    |
-| ---------- | ----- | ------------------------- |
-| `personal` | macOS | `base`, `mac`, `personal` |
-| `work`     | macOS | `base`, `mac`, `work`     |
-| `remote`   | linux | `base`, `linux`, `remote` |
+| Profile     | OS    | Layers                       |
+| ----------- | ----- | ---------------------------- |
+| `personal`  | macOS | `base`, `mac`, `personal`    |
+| `work`      | macOS | `base`, `mac`, `work`        |
+| `remote`    | linux | `base`, `linux`, `remote`    |
+| `neoremote` | linux | `base`, `linux`, `neoremote` |
 
 ## Where things go
 
@@ -37,14 +38,15 @@ Config files mirror their target path. Example: ghostty config lives at
 
 ## Layer responsibilities
 
-| Layer      | Scope                                                    |
-| ---------- | -------------------------------------------------------- |
-| `base`     | Cross-platform configs (opencode, zed, etc.)             |
-| `mac`      | macOS-only (ghostty, keyboard layout)                    |
-| `personal` | Personal identity (.gitconfig with personal email)       |
-| `work`     | Work identity and tooling (Linear MCP, pr, tmux)         |
-| `linux`    | Linux-only packages                                      |
-| `remote`   | Remote server (systemd services, nano as editor)         |
+| Layer       | Scope                                                    |
+| ----------- | -------------------------------------------------------- |
+| `base`      | Cross-platform configs (opencode, zed, etc.)             |
+| `mac`       | macOS-only (ghostty, keyboard layout)                    |
+| `personal`  | Personal identity (.gitconfig with personal email)       |
+| `work`      | Work identity and tooling (Linear MCP, pr, tmux)         |
+| `linux`     | Linux-only packages                                      |
+| `remote`    | Remote server (systemd services, nano as editor)         |
+| `neoremote` | Beta remote development (OpenCode 2, tmux/Smug, Git)     |
 
 Don't mix concerns: base shouldn't have mac-specific configs, mac shouldn't have
 identity-specific things.

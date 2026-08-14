@@ -7,25 +7,27 @@ Multi-machine dotfiles with composable layers.
 Each machine gets a **profile** that defines an ordered list of **layers** to
 apply:
 
-| Profile    | OS    | Layers                    |
-| ---------- | ----- | ------------------------- |
-| `personal` | macOS | `base`, `mac`, `personal` |
-| `work`     | macOS | `base`, `mac`, `work`     |
-| `remote`   | linux | `base`, `linux`, `remote` |
+| Profile     | OS    | Layers                       |
+| ----------- | ----- | ---------------------------- |
+| `personal`  | macOS | `base`, `mac`, `personal`    |
+| `work`      | macOS | `base`, `mac`, `work`        |
+| `remote`    | linux | `base`, `linux`, `remote`    |
+| `neoremote` | linux | `base`, `linux`, `neoremote` |
 
 Layers are stowed in order. Later layers override earlier ones for the same file
 path.
 
 ## Layers
 
-| Layer      | What it contains                   |
-| ---------- | ---------------------------------- |
-| `base`     | Configs shared across all machines |
-| `mac`      | macOS-shared configs               |
-| `personal` | Personal machine configs           |
-| `work`     | Work machine configs               |
-| `linux`    | Linux-shared configs and packages  |
-| `remote`   | Remote server configs              |
+| Layer       | What it contains                   |
+| ----------- | ---------------------------------- |
+| `base`      | Configs shared across all machines |
+| `mac`       | macOS-shared configs               |
+| `personal`  | Personal machine configs           |
+| `work`      | Work machine configs               |
+| `linux`     | Linux-shared configs and packages  |
+| `remote`    | Remote server configs              |
+| `neoremote` | Beta remote development setup      |
 
 ## Cloning
 
@@ -55,20 +57,22 @@ match.
 
 ```
 dotfiles/
+  install                  # Stow a profile's configs
   layers/
     <layer>/
-      user/             # Stowed into ~
-      system/           # Stowed into /
+      user/                # Stowed into ~
+      system/              # Stowed into /
 profiles/
-  <name>.conf           # os=macos|linux, layers=base,mac,...
+  <name>.conf              # os=macos|linux, layers=base,mac,...
 packages/
   layers/
-    <layer>             # Package list (one per line)
+    <layer>                # Package list (one per line)
 scripts/
   layers/
-    <layer>/            # Executable scripts (run in order)
+    <layer>/               # Executable scripts (run in order)
 lib/
-  profile.sh            # Shared profile selection logic
+  profile.sh               # Shared profile selection logic
+install                    # Run all installation phases
 ```
 
 ## Adding a new layer

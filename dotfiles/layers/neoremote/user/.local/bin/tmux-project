@@ -1,0 +1,124 @@
+#!/bin/sh
+
+set -eu
+
+action=${1:-open}
+config_dir=${SMUG_CONFIG_DIR:-${XDG_CONFIG_HOME:-"$HOME/.config"}/smug}
+
+pause_with_error() {
+  printf '\n%s\n' "$1" >&2
+  printf 'Press Enter to close. ' >&2
+  read -r _
+  exit 1
+}
+
+command -v tmux >/dev/null 2>&1 || pause_with_error 'tmux is not installed.'
+command -v smug >/dev/null 2>&1 || pause_with_error 'smug is not installed.'
+[ -d "$config_dir" ] || pause_with_error "Smug config directory not found: $config_dir"
+
+if [ "$action" = clone ]; then
+  session=${2:-}
+  window=${3:-}
+  path=${4:-}
+  window_id=${5:-}
+
+  [ -n "$session" ] && [ -n "$window" ] && [ -n "$path" ] && [ -n "$window_id" ] || pause_with_error 'Missing session, window, path, or window ID.'
+  if [ ! -f "$config_dir/$session.yml" ] && [ ! -f "$config_dir/$session.yaml" ]; then
+    tmux new-window -a -t "$window_id" -n "$window" -c "$path"
+    exit 0
+  fi
+
+  renamed_window_ids=$(tmux list-windows -t "=$session" -F '#{window_id} #{window_name}' | while read -r id name; do
+    if [ "$name" = "$window" ]; then
+      printf '%s\n' "$id"
+    fi
+  done)
+  printf '%s\n' "$renamed_window_ids" | grep -qx "$window_id" || pause_with_error "Window not found in session: $window_id"
+  restore_window() {
+    for id in $renamed_window_ids; do
+      tmux rename-window -t "$id" "$window" 2>/dev/null || true
+    done
+  }
+  trap restore_window EXIT HUP INT TERM
+
+  # Smug targets windows by name, so hide duplicate names while it starts.
+  for id in $renamed_window_ids; do
+    tmux rename-window -t "$id" "__smug_clone_${id#@}_$$"
+  done
+  smug start "$session:$window" --detach >/dev/null || pause_with_error "Could not clone configured window: $window"
+  new_window_id=$(tmux list-windows -t "=$session" -F '#{window_id} #{window_name}' | while read -r id name; do
+    if [ "$name" = "$window" ]; then
+      printf '%s\n' "$id"
+    fi
+  done)
+  [ -n "$new_window_id" ] || pause_with_error "Could not find cloned window: $window"
+
+  restore_window
+  trap - EXIT HUP INT TERM
+  tmux move-window -a -s "$new_window_id" -t "$window_id"
+  tmux select-window -t "$new_window_id"
+  exit 0
+fi
+
+command -v fzf >/dev/null 2>&1 || pause_with_error 'fzf is not installed.'
+
+list_projects() {
+  for config in "$config_dir"/*.yml "$config_dir"/*.yaml; do
+    [ -f "$config" ] || continue
+
+    project=${config##*/}
+    project=${project%.yml}
+    project=${project%.yaml}
+
+    marker=' '
+    if tmux has-session -t "=$project" 2>/dev/null; then
+      marker='*'
+    elif [ "$action" = stop ]; then
+      continue
+    fi
+
+    printf '%s %s\n' "$marker" "$project"
+  done | sort -u
+}
+
+projects=$(list_projects)
+if [ -z "$projects" ]; then
+  if [ "$action" = stop ]; then
+    pause_with_error 'No configured projects are running.'
+  fi
+  pause_with_error "No .yml or .yaml files found in $config_dir"
+fi
+
+case "$action" in
+  open)
+    prompt='Open project> '
+    header='Enter: open or switch    *: active'
+    ;;
+  stop)
+    prompt='Stop project> '
+    header='Enter: stop and run hooks    *: active'
+    ;;
+  *)
+    pause_with_error "Unknown action: $action"
+    ;;
+esac
+
+choice=$(printf '%s\n' "$projects" | fzf \
+  --height=100% \
+  --layout=reverse \
+  --border=none \
+  --prompt="$prompt" \
+  --header="$header") || exit 0
+
+# Every row has a one-character status marker followed by a space.
+project=${choice#??}
+
+case "$action" in
+  open)
+    exec smug start "$project" --attach
+    ;;
+  stop)
+    tmux has-session -t "=$project" 2>/dev/null || pause_with_error "Project is not running: $project"
+    exec smug stop "$project"
+    ;;
+esac

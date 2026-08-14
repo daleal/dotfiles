@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+curl -fsSL https://raw.githubusercontent.com/anomalyco/opencode/v2/install | bash
