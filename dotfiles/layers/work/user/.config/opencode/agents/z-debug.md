@@ -1,7 +1,7 @@
 ---
 description: Debugger agent that can trace behavior across repositories and identify root causes of issues.
 mode: primary
-color: warning
+color: "#f59e0b"
 permissions:
   - action: slack_*
     resource: "*"
