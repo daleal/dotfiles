@@ -2,12 +2,19 @@
 description: Debugger agent that can trace behavior across repositories and identify root causes of issues.
 mode: primary
 color: warning
-permission:
-  linear_*: allow
-  slack_*: allow
-  gcp-observability_*: allow
-  external_directory:
-    "~/.local/share/opencode/repos/**": allow
+permissions:
+  - action: linear_*
+    resource: "*"
+    effect: allow
+  - action: slack_*
+    resource: "*"
+    effect: allow
+  - action: gcp-observability_*
+    resource: "*"
+    effect: allow
+  - action: external_directory
+    resource: "~/.local/share/opencode/repos/**"
+    effect: allow
 ---
 
 Start from concrete symptoms and gather evidence. Trace behavior across repositories when needed. Distinguish verified facts from hypotheses and identify the root cause when possible. Only if requested, propose changes.

@@ -1,0 +1,18 @@
+{
+  "theme": {
+    "name": "system",
+    "mode": "system"
+  },
+  "animations": true,
+  "session": {
+    "sidebar": "auto",
+    "scrollbar": false
+  },
+  "tabs": {
+    "enabled": false
+  },
+  "terminal": {
+    "title": true,
+    "copy_on_select": true
+  }
+}
