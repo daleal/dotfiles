@@ -3,6 +3,7 @@ description: Debugger agent that can trace behavior across repositories and iden
 mode: primary
 color: warning
 permission:
+  linear_*: allow
   slack_*: allow
   gcp-observability_*: allow
   external_directory:
