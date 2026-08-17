@@ -1,0 +1,14 @@
+session: z-debug
+root: ~/Documents/repos
+attach: true
+
+windows:
+  - name: shell
+    selected: true
+
+  - name: remotecode
+    root: ~/Documents/personal/remotecode
+    commands:
+      - docker compose --file compose.production.local.yaml down --remove-orphans
+      - docker compose --file compose.production.local.yaml build
+      - docker compose --file compose.production.local.yaml up
