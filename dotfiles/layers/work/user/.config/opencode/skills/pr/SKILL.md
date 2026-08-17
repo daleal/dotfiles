@@ -1,11 +1,9 @@
 ---
-description: Creates a PR with the Fintoc PR style
-agent: pr
+name: pr
+description: Creates a PR (Pull Request). Load when you need to create a PR and you have ALREADY made all the code changes, created the feature branch and made the necessary commits.
+metadata:
+  opencode/slash: true
 ---
-
-<user-instructions>
-$ARGUMENTS
-</user-instructions>
 
 ## Linear Issue
 
