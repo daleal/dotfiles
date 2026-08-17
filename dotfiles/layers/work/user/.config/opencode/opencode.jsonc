@@ -69,9 +69,7 @@
   "permissions": [
     { "action": "subagent", "resource": "review", "effect": "deny" },
     { "action": "subagent", "resource": "pr", "effect": "deny" },
-    { "action": "linear_*", "resource": "*", "effect": "deny" },
     { "action": "slack_*", "resource": "*", "effect": "deny" },
-    { "action": "gcp-observability_*", "resource": "*", "effect": "deny" },
   ],
 
   "references": {
