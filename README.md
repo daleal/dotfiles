@@ -11,7 +11,6 @@ apply:
 | ----------- | ----- | ---------------------------- |
 | `personal`  | macOS | `base`, `mac`, `personal`    |
 | `work`      | macOS | `base`, `mac`, `work`        |
-| `remote`    | linux | `base`, `linux`, `remote`    |
 | `neoremote` | linux | `base`, `linux`, `neoremote` |
 
 Layers are stowed in order. Later layers override earlier ones for the same file
@@ -26,8 +25,7 @@ path.
 | `personal`  | Personal machine configs           |
 | `work`      | Work machine configs               |
 | `linux`     | Linux-shared configs and packages  |
-| `remote`    | Remote server configs              |
-| `neoremote` | Beta remote development setup      |
+| `neoremote` | Remote development setup           |
 
 ## Cloning
 

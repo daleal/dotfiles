@@ -11,7 +11,6 @@ in order — later layers override earlier ones for the same file path.
 | ----------- | ----- | ---------------------------- |
 | `personal`  | macOS | `base`, `mac`, `personal`    |
 | `work`      | macOS | `base`, `mac`, `work`        |
-| `remote`    | linux | `base`, `linux`, `remote`    |
 | `neoremote` | linux | `base`, `linux`, `neoremote` |
 
 ## Where things go
@@ -45,8 +44,7 @@ Config files mirror their target path. Example: ghostty config lives at
 | `personal`  | Personal identity (.gitconfig with personal email)       |
 | `work`      | Work identity and tooling (Linear MCP, pr, tmux)         |
 | `linux`     | Linux-only packages                                      |
-| `remote`    | Remote server (systemd services, nano as editor)         |
-| `neoremote` | Beta remote development (OpenCode 2, tmux/Smug, Git)     |
+| `neoremote` | Remote development (OpenCode 2, tmux/Smug, Git)          |
 
 Don't mix concerns: base shouldn't have mac-specific configs, mac shouldn't have
 identity-specific things.
