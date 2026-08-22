@@ -1,3 +1,3 @@
 opencode() {
-  caffeinate -i opencode "$@"
+  caffeinate -i opencode2 "$@"
 }

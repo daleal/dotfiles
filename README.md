@@ -22,8 +22,8 @@ path.
 | ----------- | ---------------------------------- |
 | `base`      | Configs shared across all machines |
 | `mac`       | macOS-shared configs               |
-| `personal`  | Personal machine configs           |
-| `work`      | Work machine configs               |
+| `personal`  | Personal identity and tooling      |
+| `work`      | Work identity and tooling          |
 | `linux`     | Linux-shared configs and packages  |
 | `neoremote` | Remote development setup           |
 

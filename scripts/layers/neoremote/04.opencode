@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+set -euo pipefail
+
 curl -fsSL https://opencode.ai/v2/install | bash
 
 if [[ "$("$HOME/.opencode/bin/opencode2" service status 2>/dev/null)" != "http://127.0.0.1:4096" ]]; then

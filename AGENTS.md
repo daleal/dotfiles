@@ -37,14 +37,14 @@ Config files mirror their target path. Example: ghostty config lives at
 
 ## Layer responsibilities
 
-| Layer       | Scope                                                    |
-| ----------- | -------------------------------------------------------- |
-| `base`      | Cross-platform configs (opencode, zed, etc.)             |
-| `mac`       | macOS-only (ghostty, keyboard layout)                    |
-| `personal`  | Personal identity (.gitconfig with personal email)       |
-| `work`      | Work identity and tooling (Linear MCP, pr, tmux)         |
-| `linux`     | Linux-only packages                                      |
-| `neoremote` | Remote development (OpenCode 2, tmux/Smug, Git)          |
+| Layer       | Scope                                                       |
+| ----------- | ----------------------------------------------------------- |
+| `base`      | Cross-platform configs (OpenCode, Zed, etc.)                |
+| `mac`       | macOS-only (Ghostty, keyboard layout)                       |
+| `personal`  | Personal identity and OpenCode runtime                      |
+| `work`      | Work identity and tooling (OpenCode, Linear MCP, pr, tmux)  |
+| `linux`     | Linux-only packages                                         |
+| `neoremote` | Remote development (OpenCode, tmux/Smug, Git)               |
 
 Don't mix concerns: base shouldn't have mac-specific configs, mac shouldn't have
 identity-specific things.
@@ -67,7 +67,7 @@ identity-specific things.
 - **New shell alias/function**: add a `.sh` file to
   `dotfiles/layers/<layer>/user/.config/shell/aliases.d/`. These are sourced
   automatically by a snippet injected into shell rc files by the
-  `scripts/layers/base/shell-aliases` install script.
+  `scripts/layers/base/00.shell-aliases` install script.
 
 ## Good to know
 
