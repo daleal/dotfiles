@@ -45,26 +45,9 @@
     "ruby-lsp": { "disabled": true }
   },
 
-  "permission": {
-    "task": {
-      "review": "deny"
-    }
-  },
+  "permissions": [
+    { "action": "subagent", "resource": "review", "effect": "deny" },
+  ],
 
-  "plugin": ["@daleal/opencode-workflows@0.1.3"],
-
-  "provider": {
-    "openrouter": {
-      "models": {
-        "z-ai/glm-5.2": {
-          "options": {
-            "provider": {
-              "order": ["fireworks", "friendli"],
-              "allow_fallbacks": false,
-            },
-          },
-        },
-      },
-    },
-  },
+  "plugins": ["@daleal/opencode-workflows@0.1.3"],
 }

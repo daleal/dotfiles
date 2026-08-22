@@ -3,7 +3,9 @@ description: Researches the codebase to answer questions and investigate
 mode: all
 temperature: 0.5
 permissions:
-  edit: deny
+  - action: edit
+    resource: "*"
+    effect: deny
 ---
 
 You are in research mode. Your job is to investigate this repository and
