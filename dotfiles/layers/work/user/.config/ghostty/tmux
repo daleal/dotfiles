@@ -1,1 +1,0 @@
-command = /bin/zsh -lc 'exec smug start home --attach'
