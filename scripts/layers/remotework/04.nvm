@@ -20,6 +20,9 @@ install_nvm() {
 
   curl -fsSL "https://raw.githubusercontent.com/nvm-sh/nvm/$version/install.sh" |
     PROFILE="$HOME/.zshrc" bash
+
+  source "$nvm_dir/nvm.sh"
+  nvm install node
 }
 
 configure_nvmrc_hook() {
