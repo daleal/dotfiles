@@ -3,6 +3,7 @@ build-essential
 fzf
 libevent-dev
 libncurses-dev
+nano
 pkg-config
 unzip
 zsh
