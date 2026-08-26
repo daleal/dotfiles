@@ -48,8 +48,8 @@
   "mcp": {
     "servers": {
       "linear": {
-        "type": "local",
-        "command": ["npx", "mcp-remote", "https://mcp.linear.app/mcp"],
+        "type": "remote",
+        "url": "https://mcp.linear.app/mcp",
       },
       "notion": {
         "type": "remote",
