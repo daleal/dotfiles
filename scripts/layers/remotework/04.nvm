@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+install_nvm() {
+  local nvm_dir latest_release version
+
+  nvm_dir="${NVM_DIR:-$HOME/.nvm}"
+  if command -v nvm >/dev/null 2>&1 || [[ -s "$nvm_dir/nvm.sh" ]]; then
+    return
+  fi
+
+  latest_release="$(curl -fsSL -o /dev/null -w '%{url_effective}' \
+    https://github.com/nvm-sh/nvm/releases/latest)"
+  version="${latest_release##*/}"
+
+  if [[ ! "$version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    printf 'Unable to determine the latest nvm version from %s\n' "$latest_release" >&2
+    return 1
+  fi
+
+  curl -fsSL "https://raw.githubusercontent.com/nvm-sh/nvm/$version/install.sh" |
+    PROFILE="$HOME/.zshrc" bash
+}
+
+configure_nvmrc_hook() {
+  local zshrc begin_marker end_marker block
+
+  zshrc="$HOME/.zshrc"
+  begin_marker='# >>> nvmrc hook >>>'
+  end_marker='# <<< nvmrc hook <<<'
+  block="$begin_marker
+$(cat <<'EOF'
+load-nvmrc() {
+  local nvmrc_path
+  nvmrc_path="$(nvm_find_nvmrc)"
+
+  if [ -n "$nvmrc_path" ]; then
+    local nvmrc_node_version
+    nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+
+    if [ "$nvmrc_node_version" = "N/A" ]; then
+      nvm install
+    elif [ "$nvmrc_node_version" != "$(nvm version)" ]; then
+      nvm use
+    fi
+  elif [ -n "$(PWD=$OLDPWD nvm_find_nvmrc)" ] && [ "$(nvm version)" != "$(nvm version default)" ]; then
+    echo "Reverting to nvm default version"
+    nvm use default
+  fi
+}
+
+add-zsh-hook chpwd load-nvmrc
+load-nvmrc
+EOF
+)
+$end_marker"
+
+  touch "$zshrc"
+  if grep -qF "$begin_marker" "$zshrc" && grep -qF "$end_marker" "$zshrc"; then
+    awk -v begin="$begin_marker" -v end="$end_marker" '
+      NR == FNR { block = block (FNR == 1 ? "" : ORS) $0; next }
+      $0 == begin { print block; replacing = 1; next }
+      replacing && $0 == end { replacing = 0; next }
+      !replacing { print }
+    ' <(printf '%s\n' "$block") "$zshrc" > "$zshrc.tmp"
+    mv "$zshrc.tmp" "$zshrc"
+  else
+    printf '\n%s\n' "$block" >> "$zshrc"
+  fi
+}
+
+install_nvm
+configure_nvmrc_hook
+unset -f install_nvm configure_nvmrc_hook
