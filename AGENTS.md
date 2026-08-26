@@ -7,11 +7,12 @@ Keep the `AGENTS.md` file updated with pertinent changes to the overarching repo
 Profiles (`profiles/<name>.conf`) define an OS and ordered layers. Layers apply
 in order — later layers override earlier ones for the same file path.
 
-| Profile     | OS    | Layers                       |
-| ----------- | ----- | ---------------------------- |
-| `personal`  | macOS | `base`, `mac`, `personal`    |
-| `work`      | macOS | `base`, `mac`, `work`        |
-| `neoremote` | linux | `base`, `linux`, `neoremote` |
+| Profile      | OS    | Layers                        |
+| ------------ | ----- | ----------------------------- |
+| `personal`   | macOS | `base`, `mac`, `personal`     |
+| `work`       | macOS | `base`, `mac`, `work`         |
+| `neoremote`  | linux | `base`, `linux`, `neoremote`  |
+| `remotework` | linux | `base`, `linux`, `remotework` |
 
 ## Where things go
 
@@ -37,14 +38,15 @@ Config files mirror their target path. Example: ghostty config lives at
 
 ## Layer responsibilities
 
-| Layer       | Scope                                                       |
-| ----------- | ----------------------------------------------------------- |
-| `base`      | Cross-platform configs (OpenCode, Zed, etc.)                |
-| `mac`       | macOS-only (Ghostty, keyboard layout)                       |
-| `personal`  | Personal identity and OpenCode runtime                      |
-| `work`      | Work identity and tooling (OpenCode, Linear MCP, pr, tmux)  |
-| `linux`     | Linux-only packages                                         |
-| `neoremote` | Remote development (OpenCode, tmux/Smug, Git)               |
+| Layer        | Scope                                                       |
+| ------------ | ----------------------------------------------------------- |
+| `base`       | Cross-platform configs (OpenCode, Zed, etc.)                |
+| `mac`        | macOS-only (Ghostty, keyboard layout)                       |
+| `personal`   | Personal identity and OpenCode runtime                      |
+| `work`       | Work identity and tooling (OpenCode, Linear MCP, pr, tmux)  |
+| `linux`      | Linux-only packages                                         |
+| `neoremote`  | Remote development (OpenCode, tmux/Smug, Git)               |
+| `remotework` | Remote work tooling with work identity and project configs  |
 
 Don't mix concerns: base shouldn't have mac-specific configs, mac shouldn't have
 identity-specific things.

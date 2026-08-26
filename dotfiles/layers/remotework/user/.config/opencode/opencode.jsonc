@@ -1,0 +1,95 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "autoupdate": true,
+
+  "formatter": {
+    "eslint": {
+      "command": ["bunx", "eslint", "--fix", "$FILE"],
+      "extensions": [
+        ".js",
+        ".jsx",
+        ".mjs",
+        ".cjs",
+        ".ts",
+        ".tsx",
+        ".mts",
+        ".cts",
+        ".html",
+        ".htm",
+        ".css",
+        ".scss",
+        ".sass",
+        ".less",
+        ".vue",
+        ".svelte",
+        ".json",
+        ".jsonc",
+        ".yaml",
+        ".yml",
+        ".toml",
+        ".xml",
+        ".md",
+        ".mdx",
+        ".graphql",
+        ".gql"
+      ]
+    }
+  },
+
+  "lsp": {
+    "sorbet": {
+      "command": ["bundle", "exec", "srb", "tc", "--lsp", "--disable-watchman"],
+      "extensions": [".rb", ".rbi"]
+    },
+    "ruby-lsp": { "disabled": true }
+  },
+
+  "mcp": {
+    "servers": {
+      "linear": {
+        "type": "local",
+        "command": ["npx", "mcp-remote", "https://mcp.linear.app/mcp"],
+      },
+      "notion": {
+        "type": "remote",
+        "url": "https://mcp.notion.com/mcp",
+      },
+      "slack": {
+        "type": "remote",
+        "url": "https://mcp.slack.com/mcp",
+        "oauth": {
+          "client_id": "1601185624273.8899143856786",
+          "redirect_uri": "http://localhost:3118/callback",
+        },
+      },
+      "gcp-observability": {
+        "type": "local",
+        "command": ["npx", "-y", "@google-cloud/observability-mcp"],
+      },
+    },
+  },
+
+  "permissions": [
+    { "action": "subagent", "resource": "review", "effect": "deny" },
+    { "action": "subagent", "resource": "pr", "effect": "deny" },
+    { "action": "slack_*", "resource": "*", "effect": "deny" },
+  ],
+
+  "references": {
+    "dashboard": {
+      "repository": "github.com/fintoc-com/dashboard",
+    },
+    "fintoc-rails": {
+      "repository": "github.com/fintoc-com/fintoc-rails",
+    },
+    "pacioli": {
+      "repository": "github.com/fintoc-com/pacioli",
+    },
+  },
+
+  "plugins": [
+    "opencode-claude-auth-v2@latest",
+    "@daleal/opencode-workflows@0.1.3",
+  ],
+}

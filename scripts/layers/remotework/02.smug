@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+case "$(uname -m)" in
+  x86_64)
+    release_arch=x86_64
+    ;;
+  aarch64 | arm64)
+    release_arch=arm64
+    ;;
+  *)
+    echo "Unsupported architecture for smug: $(uname -m)" >&2
+    return 1
+    ;;
+esac
+
+tmp_dir="$(mktemp -d)"
+cleanup_smug_install() {
+  rm -rf "$tmp_dir"
+}
+trap cleanup_smug_install EXIT HUP INT TERM
+
+latest_url="$(curl -fsSL -o /dev/null -w '%{url_effective}' \
+  https://github.com/ivaaaan/smug/releases/latest)"
+tag="${latest_url##*/}"
+if [[ "$tag" != v* ]]; then
+  echo "Could not resolve the latest Smug release" >&2
+  return 1
+fi
+
+release_url="https://github.com/ivaaaan/smug/releases/download/$tag"
+curl -fsSL "$release_url/checksums.txt" -o "$tmp_dir/checksums.txt"
+
+checksum=
+archive=
+while read -r candidate_checksum candidate_archive; do
+  case "$candidate_archive" in
+    *_Linux_"$release_arch".tar.gz)
+      checksum="$candidate_checksum"
+      archive="$candidate_archive"
+      break
+      ;;
+  esac
+done < "$tmp_dir/checksums.txt"
+
+if [[ -z "$archive" ]]; then
+  echo "Smug release has no Linux asset for architecture: $release_arch" >&2
+  return 1
+fi
+
+curl -fsSL "$release_url/$archive" \
+  -o "$tmp_dir/$archive"
+printf '%s  %s\n' "$checksum" "$tmp_dir/$archive" | sha256sum --check --status
+tar -xzf "$tmp_dir/$archive" -C "$tmp_dir"
+sudo install -m 0755 "$tmp_dir/smug" /usr/local/bin/smug
+cleanup_smug_install
+trap - EXIT HUP INT TERM
+unset -f cleanup_smug_install
