@@ -2,14 +2,26 @@
 set -euo pipefail
 
 setup_zsh() {
-  local zsh_bin current_shell zshrc begin_marker end_marker temp_file
+  local zsh_bin profile zshrc begin_marker end_marker temp_file
 
   zsh_bin="$(command -v zsh)"
-  current_shell="$(getent passwd "$(id -un)" | cut -d: -f7)"
 
-  # The login shell change applies to the next session.
-  if [[ "$current_shell" != "$zsh_bin" ]]; then
-    sudo -n usermod --shell "$zsh_bin" "$(id -un)"
+  # OS Login users are provided through NSS and cannot be changed by usermod.
+  profile="$HOME/.profile"
+  begin_marker='# >>> zsh login >>>'
+  end_marker='# <<< zsh login <<<'
+
+  if ! grep -qF "$begin_marker" "$profile" 2>/dev/null; then
+    temp_file="$(mktemp)"
+    {
+      printf '%s\n' "$begin_marker"
+      printf '%s\n' 'if [ -t 0 ] && [ -z "${ZSH_VERSION:-}" ]; then'
+      printf '  exec "%s" -l\n' "$zsh_bin"
+      printf '%s\n\n' 'fi' "$end_marker"
+      [[ ! -f "$profile" ]] || cat "$profile"
+    } > "$temp_file"
+    cat "$temp_file" > "$profile"
+    rm -f "$temp_file"
   fi
 
   zshrc="$HOME/.zshrc"

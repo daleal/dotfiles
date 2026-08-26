@@ -74,3 +74,4 @@ identity-specific things.
 ## Good to know
 
 - Uninstall is intentionally config-only: top-level `uninstall` delegates to `dotfiles/uninstall`, which unstows profile layers in reverse order. It does not remove packages, reverse install scripts, or restore overwritten unmanaged files.
+- `remotework` runs under Google OS Login, whose NSS users are not present in `/etc/passwd`; its Zsh setup uses `.profile` instead of `usermod`.
