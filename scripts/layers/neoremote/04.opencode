@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 set -euo pipefail
 
 curl -fsSL https://opencode.ai/v2/install | bash
