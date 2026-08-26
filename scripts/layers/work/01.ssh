@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SSH_DIR="$HOME/.ssh"
+SSH_CONFIG="$SSH_DIR/config"
+BEGIN_MARKER="# >>> remote.dev.fin >>>"
+END_MARKER="# <<< remote.dev.fin <<<"
+REMOTE_USERNAME="daniel_fintoc_com"
+
+mkdir -p "$SSH_DIR"
+touch "$SSH_CONFIG"
+chmod 700 "$SSH_DIR"
+chmod 600 "$SSH_CONFIG"
+
+BLOCK=$(cat <<EOF
+$BEGIN_MARKER
+Host remote.dev.fin
+  User $REMOTE_USERNAME
+  IdentityFile ~/.ssh/google_compute_engine
+  IdentitiesOnly yes
+$END_MARKER
+EOF
+)
+
+if grep -qF "$BEGIN_MARKER" "$SSH_CONFIG" && grep -qF "$END_MARKER" "$SSH_CONFIG"; then
+  awk -v begin="$BEGIN_MARKER" -v end="$END_MARKER" '
+    NR == FNR { block = block (FNR == 1 ? "" : ORS) $0; next }
+    $0 == begin { print block; replacing = 1; next }
+    replacing && $0 == end { replacing = 0; next }
+    !replacing { print }
+  ' <(printf '%s\n' "$BLOCK") "$SSH_CONFIG" > "$SSH_CONFIG.tmp"
+  mv "$SSH_CONFIG.tmp" "$SSH_CONFIG"
+  chmod 600 "$SSH_CONFIG"
+else
+  printf '\n%s\n' "$BLOCK" >> "$SSH_CONFIG"
+fi
