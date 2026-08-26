@@ -51,6 +51,10 @@
         "type": "local",
         "command": ["npx", "mcp-remote", "https://mcp.linear.app/mcp"],
       },
+      "notion": {
+        "type": "remote",
+        "url": "https://mcp.notion.com/mcp",
+      },
       "slack": {
         "type": "remote",
         "url": "https://mcp.slack.com/mcp",
