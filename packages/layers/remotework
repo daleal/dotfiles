@@ -4,4 +4,5 @@ fzf
 libevent-dev
 libncurses-dev
 pkg-config
+unzip
 zsh
