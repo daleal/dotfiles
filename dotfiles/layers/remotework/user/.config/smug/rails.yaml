@@ -1,0 +1,26 @@
+session: rails
+root: ~/repos/fintoc-rails
+attach: true
+
+before_start:
+  - docker compose up --detach --wait >/dev/tty 2>&1
+  - doppler run -- rbenv exec bundle install >/dev/tty 2>&1
+
+stop:
+  - docker compose down
+
+windows:
+  - name: shell
+    selected: true
+
+  - name: agent
+    commands:
+      - opencode
+
+  - name: webserver
+    commands:
+      - doppler run -- bundle exec rails server
+
+  - name: databases
+    commands:
+      - docker compose logs --follow
