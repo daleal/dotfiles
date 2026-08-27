@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(dirname "$DIR")"
+
+source "$REPO_DIR/lib/profile.sh"
+select_profile "$REPO_DIR" "${1:-}"
+
+"$DIR/uninstall" "$PROFILE"
+git -C "$REPO_DIR" pull
+"$DIR/install" "$PROFILE"

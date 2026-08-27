@@ -51,7 +51,16 @@ independently:
 All scripts auto-detect the OS, filter matching profiles, and prompt if multiple
 match.
 
-## Uninstall dotfiles
+## Update dotfiles
+
+```bash
+bash ~/dev/dotfiles/dotfiles/update
+```
+
+This runs the uninstall script for the selected profile's dotfiles, pulls the
+latest repository changes, then installs the same profile again.
+
+## Uninstall
 
 ```bash
 bash ~/dev/dotfiles/uninstall
@@ -72,6 +81,7 @@ bash ~/dev/dotfiles/dotfiles/uninstall
 dotfiles/
   install                  # Stow a profile's configs
   uninstall                # Unstow a profile's configs
+  update                   # Unstow, pull, and restow a profile's configs
   layers/
     <layer>/
       user/                # Stowed into ~
