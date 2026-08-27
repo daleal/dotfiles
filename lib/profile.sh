@@ -15,11 +15,15 @@ detect_os() {
 select_profile() {
   local repo_dir="$1"
   local explicit_profile="${2:-}"
+  local profile_file="$repo_dir/.profile"
+  local prompted=false
 
   OS="$(detect_os)"
 
   if [[ -n "$explicit_profile" ]]; then
     PROFILE="$explicit_profile"
+  elif [[ -s "$profile_file" ]]; then
+    IFS= read -r PROFILE < "$profile_file"
   else
     local profiles=()
     for file in "$repo_dir"/profiles/*.conf; do
@@ -41,7 +45,8 @@ select_profile() {
         echo "  - $(basename "$file" .conf)" >&2
       done
       echo "" >&2
-      read -rp "Enter profile name: " PROFILE
+      read -rp "Enter profile name (will be remembered as default): " PROFILE
+      prompted=true
     elif [[ ${#profiles[@]} -eq 1 ]]; then
       PROFILE="${profiles[0]}"
       echo "Auto-selected profile: $PROFILE (only match for $OS)"
@@ -51,7 +56,8 @@ select_profile() {
         echo "  - $name"
       done
       echo ""
-      read -rp "Enter profile name: " PROFILE
+      read -rp "Enter profile name (will be remembered as default): " PROFILE
+      prompted=true
     fi
   fi
 
@@ -59,6 +65,10 @@ select_profile() {
   if [[ ! -f "$conf" ]]; then
     echo "Profile '$PROFILE' not found." >&2
     return 1
+  fi
+
+  if [[ "$prompted" == true ]]; then
+    printf '%s\n' "$PROFILE" > "$profile_file"
   fi
 
   # Parse layers
