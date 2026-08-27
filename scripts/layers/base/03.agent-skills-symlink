@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+mkdir -p "$HOME/.agents/skills" "$HOME/.claude"
+
+if [[ -e "$HOME/.claude/skills" && ! -L "$HOME/.claude/skills" ]]; then
+  echo "Refusing to replace existing directory: $HOME/.claude/skills" >&2
+  exit 1
+fi
+
+ln -sfn ../.agents/skills "$HOME/.claude/skills"
