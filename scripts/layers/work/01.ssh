@@ -18,6 +18,27 @@ Host remote.dev.fin
   User $REMOTE_USERNAME
   IdentityFile ~/.ssh/google_compute_engine
   IdentitiesOnly yes
+  ExitOnForwardFailure yes
+
+  # Port Forwarding
+  ## Dashboard
+  LocalForward 8888 127.0.0.1:8888  # Application
+  LocalForward 6006 127.0.0.1:6006  # Storybook
+
+  # Rails
+  LocalForward 3000 127.0.0.1:3000  # Application
+
+  # Pacioli
+  LocalForward 3001 127.0.0.1:3001  # Sandbox
+  LocalForward 3002 127.0.0.1:3002  # MX
+  LocalForward 3003 127.0.0.1:3003  # CL
+
+  # Luna
+  LocalForward 3333 127.0.0.1:3333  # API
+  LocalForward 3334 127.0.0.1:3334  # Admin API
+  LocalForward 8080 127.0.0.1:8080  # Simulator
+  LocalForward 8081 127.0.0.1:8081  # Admin UI
+  LocalForward 4983 127.0.0.1:4983  # DB Studio
 $END_MARKER
 EOF
 )

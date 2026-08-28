@@ -7,7 +7,6 @@ remote() {
       return 2
     fi
 
-    forward_options=(-o ExitOnForwardFailure=yes)
     local port
     while true; do
       port="${ports%%,*}"
