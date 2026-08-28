@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ruby_build_dir="$(rbenv root)/plugins/ruby-build"
+
+if [[ -d "$ruby_build_dir/.git" ]]; then
+  git -C "$ruby_build_dir" pull --ff-only
+elif [[ -e "$ruby_build_dir" ]]; then
+  echo "Cannot install ruby-build: $ruby_build_dir already exists" >&2
+  return 1
+else
+  git clone https://github.com/rbenv/ruby-build.git "$ruby_build_dir"
+fi
+
+unset ruby_build_dir
+
+rbenv init

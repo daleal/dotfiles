@@ -3,6 +3,7 @@ build-essential
 fzf
 libevent-dev
 libncurses-dev
+libpq-dev
 nano
 pkg-config
 rbenv
