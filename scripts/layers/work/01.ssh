@@ -18,7 +18,6 @@ Host remote.dev.fin
   User $REMOTE_USERNAME
   IdentityFile ~/.ssh/google_compute_engine
   IdentitiesOnly yes
-  ExitOnForwardFailure yes
 
   # Port Forwarding
   ## Dashboard
