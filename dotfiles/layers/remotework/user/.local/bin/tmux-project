@@ -115,7 +115,9 @@ project=${choice#??}
 
 case "$action" in
   open)
-    exec smug start "$project" --attach
+    tmux has-session -t "=$project" 2>/dev/null || printf 'This may take a while.\n'
+    smug start "$project" --detach --debug || pause_with_error "Could not start project: $project (see $config_dir/smug.log)"
+    tmux switch-client -t "=$project" || pause_with_error "Could not switch to project: $project"
     ;;
   stop)
     tmux has-session -t "=$project" 2>/dev/null || pause_with_error "Project is not running: $project"

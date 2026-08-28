@@ -115,6 +115,7 @@ project=${choice#??}
 
 case "$action" in
   open)
+    tmux has-session -t "=$project" 2>/dev/null || printf 'This may take a while.\n'
     exec smug start "$project" --attach
     ;;
   stop)
