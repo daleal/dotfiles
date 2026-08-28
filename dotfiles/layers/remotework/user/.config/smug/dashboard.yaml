@@ -3,7 +3,8 @@ root: ~/repos/dashboard
 attach: true
 
 before_start:
-  - doppler run -- npm install
+  - doppler setup --no-interactive --project dashboard --config dev
+  - doppler run -- zsh -ic 'npm install'
 
 windows:
   - name: shell

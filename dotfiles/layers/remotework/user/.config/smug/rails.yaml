@@ -3,6 +3,8 @@ root: ~/repos/fintoc-rails
 attach: true
 
 before_start:
+  - doppler setup --no-interactive --project fintoc-rails --config dev
+  - rbenv install --skip-existing "$(cat .ruby-version)" >/dev/tty 2>&1
   - docker compose up --detach --wait >/dev/tty 2>&1
   - doppler run -- rbenv exec bundle install >/dev/tty 2>&1
 

@@ -3,6 +3,8 @@ root: ~/repos/pacioli
 attach: true
 
 before_start:
+  - doppler setup --no-interactive --project pacioli --config dev
+  - rbenv install --skip-existing "$(cat .ruby-version)" >/dev/tty 2>&1
   - docker compose up --detach --wait $(docker compose config --services | grep -vE '^(pubsub|pubsub-pacioli-setup)$') >/dev/tty 2>&1
   - doppler run -- rbenv exec bundle install >/dev/tty 2>&1
 
