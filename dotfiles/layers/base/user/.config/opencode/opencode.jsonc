@@ -48,6 +48,4 @@
   "permissions": [
     { "action": "subagent", "resource": "review", "effect": "deny" },
   ],
-
-  "plugins": ["@daleal/opencode-workflows@0.1.3"],
 }

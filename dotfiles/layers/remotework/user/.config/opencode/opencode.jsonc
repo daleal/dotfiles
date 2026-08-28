@@ -88,8 +88,5 @@
     },
   },
 
-  "plugins": [
-    "opencode-claude-auth-v2@latest",
-    "@daleal/opencode-workflows@0.1.3",
-  ],
+  "plugins": ["opencode-claude-auth-v2@latest"],
 }
