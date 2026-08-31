@@ -91,4 +91,19 @@
   },
 
   "plugins": ["opencode-claude-auth-v2@latest"],
+
+  "providers": {
+    "openrouter": {
+      "models": {
+        "z-ai/glm-5.3-flash": {
+          "body": {
+            "provider": {
+              "order": ["baseten/fp8", "makora"],
+              "allow_fallbacks": false,
+            },
+          },
+        },
+      },
+    },
+  },
 }
