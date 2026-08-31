@@ -98,7 +98,7 @@
         "z-ai/glm-5.3-flash": {
           "body": {
             "provider": {
-              "order": ["baseten/fp8", "makora"],
+              "order": ["modal/fp8", "baseten/fp8", "makora"],
               "allow_fallbacks": false,
             },
           },
