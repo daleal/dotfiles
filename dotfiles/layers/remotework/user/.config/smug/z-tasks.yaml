@@ -1,0 +1,14 @@
+session: z-tasks
+root: ~/personal/opentasks
+attach: true
+
+windows:
+  - name: shell
+    selected: true
+
+  - name: opentasks
+    commands:
+      - make production:build
+      - make production:run db:migrate
+      - make production:down
+      - make production:up
