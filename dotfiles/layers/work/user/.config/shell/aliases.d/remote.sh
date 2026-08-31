@@ -18,6 +18,9 @@ remote() {
     8080 # Simulator
     8081 # Admin UI
     4983 # DB Studio
+
+    # daleal-specific
+    6969 # Opentasks
   )
   local -a forward_options=()
   if [[ "${1:-}" == "--forward-ports" ]]; then
