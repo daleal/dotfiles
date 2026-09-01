@@ -63,10 +63,6 @@
           "redirect_uri": "http://localhost:3118/callback",
         },
       },
-      "gcp-observability": {
-        "type": "local",
-        "command": ["npx", "-y", "@google-cloud/observability-mcp"],
-      },
     },
   },
 
