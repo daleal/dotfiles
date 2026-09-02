@@ -113,7 +113,7 @@ Source control is always available through git and `gh`. For the other six, clas
 
 Aim for a complete **coverage map**, not a minimal one. A null result from an issue tracker is evidence the decision was not ticketed, a useful fact in itself. Document the null, don't skip the search.
 
-Launch all matching investigators in a single message so they run concurrently. One investigator per category lets each specialize in one tool's query vocabulary and result shape. Don't ask one agent to cover multiple MCPs.
+Launch all matching investigators concurrently in the foreground and wait for every investigator to finish before continuing to synthesis. If the available tooling requires background execution for concurrency, launch them together, continue only independent local research while they run, and then wait for all pending investigators before synthesizing or sending a final response. Never end the turn or present conclusions while an investigator is still running. One investigator per category lets each specialize in one tool's query vocabulary and result shape. Don't ask one agent to cover multiple MCPs.
 
 Each investigator gets:
 1. The base prompt from `references/investigator-prompt.md`
