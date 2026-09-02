@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+case "$(uname -m)" in
+  x86_64)
+    release_arch=x86_64
+    ;;
+  aarch64 | arm64)
+    release_arch=aarch64
+    ;;
+  *)
+    echo "Unsupported architecture for rubyfmt: $(uname -m)" >&2
+    return 1
+    ;;
+esac
+
+latest_url="$(curl -fsSL -o /dev/null -w '%{url_effective}' \
+  https://github.com/fables-tales/rubyfmt/releases/latest)"
+version="${latest_url##*/}"
+if [[ "$version" != v* ]]; then
+  echo "Could not resolve the latest rubyfmt release" >&2
+  return 1
+fi
+
+tmp_dir="$(mktemp -d)"
+cleanup_rubyfmt_install() {
+  rm -rf "$tmp_dir"
+}
+trap cleanup_rubyfmt_install EXIT HUP INT TERM
+
+archive="rubyfmt-$version-Linux-$release_arch.tar.gz"
+release_url="https://github.com/fables-tales/rubyfmt/releases/download/$version"
+
+curl -fsSL "$release_url/$archive" -o "$tmp_dir/$archive"
+tar -xzf "$tmp_dir/$archive" -C "$tmp_dir" --strip-components=3 \
+  "tmp/releases/$version-Linux/rubyfmt"
+sudo install -m 0755 "$tmp_dir/rubyfmt" /usr/local/bin/rubyfmt
+
+cleanup_rubyfmt_install
+trap - EXIT HUP INT TERM
+unset -f cleanup_rubyfmt_install
+unset archive latest_url release_arch release_url tmp_dir version
