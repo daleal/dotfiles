@@ -1,0 +1,1 @@
+Unless explicitly stated, whenever users ask about production data (whether it being from production databases, the database mirror, or BigQuery), they are asking for you to read the data from the BigQuery mirror, on the `fin-master-mirror-engprd` named project.

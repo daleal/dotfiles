@@ -1,6 +1,6 @@
 ---
 name: gcloud
-description: Use when you need to interact with the Google Cloud Platform. When users ask for help with gcloud commands, or with logs from production-running applications, they are accessed through gcloud, so you should use this skill to assist them.
+description: Use when you need to interact with the Google Cloud Platform and when planning, generating, constructing, proposing, describing, or executing any gcloud CLI commands - including when answering questions about gcloud syntax, or formatting flags. Don't use when writing Google Cloud client library code or raw REST/gRPC API requests.
 ---
 
 # gcloud CLI Skill for AI Agents
