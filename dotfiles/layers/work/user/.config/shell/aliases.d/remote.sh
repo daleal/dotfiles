@@ -56,4 +56,8 @@ remote() {
   command ssh -t "${forward_options[@]}" \
     remote.dev.fin \
     'if tmux has-session 2>/dev/null; then exec tmux attach-session; else exec /usr/local/bin/smug start home --attach; fi'
+  local ssh_status=$?
+  # A broken connection can leave mouse tracking enabled, making scroll events appear as input.
+  printf '\033[?1000l\033[?1002l\033[?1003l\033[?1006l'
+  return "$ssh_status"
 }
