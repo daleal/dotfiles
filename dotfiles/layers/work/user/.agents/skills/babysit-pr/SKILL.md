@@ -18,7 +18,7 @@ Accept no argument (infer the PR from the current branch), a PR number, or a PR 
 ## Workflow
 
 1. Verify that the current branch is the PR head branch and inspect the PR directly with `gh` before making changes.
-2. If the PR is a draft, comment `fin review` to start the AI review. Do this at the start and again after every babysitter push while it remains a draft.
+2. If the PR is a draft, comment `fin review` once to start the AI review. After a babysitter push, repeat it only if the earlier comment successfully started a review.
 3. Start the watcher in continuous mode and consume its JSONL output in the current session.
 4. Wait for checks to finish after every push. Never assess readiness from checks belonging to an older SHA.
 5. Ignore `hermes/approval-gate` and `bors`; they do not need to pass for babysitting to succeed.
@@ -30,6 +30,8 @@ Accept no argument (infer the PR from the current branch), a PR number, or a PR 
 9. After handling findings, run `fin review` again when no push retriggers review. On ready-for-review PRs, each push triggers review automatically. On draft PRs, explicitly comment `fin review` after every push.
 10. Continue until the latest SHA has an `LGTM` from `fin-review` and every non-ignored check passes.
 11. If the PR is still a draft, run `gh pr ready`. Report the successful handoff and stop.
+
+If `fin review` leaves the draft's code-review check `SKIPPED` and publishes no review or findings, the comment trigger is unavailable. Do not retry it and do not mark the PR ready. Continue fixing and waiting for every other check, then report the comment-trigger problem with the PR left as a draft.
 
 Do not stop after a push, while checks are pending, after merely replying to review feedback, or when an older commit has an `LGTM`.
 
@@ -71,7 +73,7 @@ Read `references/heuristics.md` before deciding whether to fix or reject a findi
 
 ## Fin Review
 
-`fin-review[bot]` publishes inline review comments and a review result. Its Hermes check is normalized as `hermes/pr-pipeline/code-review`.
+`fin-review[bot]` publishes inline review comments and a review result. In some repositories its LGTM review is attributed to `github-actions`; accept either identity when the review targets the current head SHA. Its Hermes check is normalized as `hermes/pr-pipeline/code-review`.
 
 When the check is pending, wait. When it fails, inspect the newly surfaced `fin-review` comments before doing anything else.
 
@@ -83,7 +85,7 @@ For each finding:
 
 After all findings are handled, obtain a fresh review for the current SHA. A prior `LGTM` is stale after any push.
 
-On draft PRs, post `fin review` after every push. On non-draft PRs, a push automatically starts review; use `fin review` only when another review is needed without a push, such as after rejecting a finding.
+On draft PRs, post `fin review` after every push only while that trigger is known to work. On non-draft PRs, a push automatically starts review; use `fin review` only when another review is needed without a push, such as after rejecting a finding.
 
 The PR is successfully babysat only when the current SHA has `fin-review` feedback containing `LGTM` and all non-ignored checks pass.
 
@@ -120,6 +122,8 @@ Stop and ask the user what to do when:
 - A failure appears owned by infrastructure or another team.
 - Reviewer feedback is ambiguous or requires a product/design decision.
 - A human review comment needs a response.
+
+An unavailable `fin review` comment trigger is not an immediate roadblock: finish all other branch-owned fixes and checks first, leave the PR in draft, then report it.
 
 Include the concrete roadblock, evidence gathered, and the smallest useful choices available.
 

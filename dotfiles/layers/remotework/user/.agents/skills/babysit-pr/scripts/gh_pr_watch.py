@@ -14,7 +14,7 @@ from urllib.parse import urlparse
 
 IGNORED_CHECKS = {"bors", "hermes/approval-gate"}
 FIN_REVIEW_CHECK = "hermes/pr-pipeline/code-review"
-FIN_REVIEW_LOGIN = "fin-review"
+FIN_REVIEW_LOGINS = {"fin-review", "github-actions"}
 PENDING_STATES = {"EXPECTED", "IN_PROGRESS", "PENDING", "QUEUED", "REQUESTED", "WAITING"}
 PASSING_CONCLUSIONS = {"NEUTRAL", "SKIPPED", "SUCCESS"}
 
@@ -270,13 +270,15 @@ def fetch_fin_review(pr, state):
     review_comments = [
         normalize_review_comment(item)
         for item in comments
-        if isinstance(item, dict) and reviewer_login(item.get("user")) == FIN_REVIEW_LOGIN
+        if isinstance(item, dict)
+        and reviewer_login(item.get("user")) in FIN_REVIEW_LOGINS
     ]
     reviews = [
         normalize_review(item)
         for item in pr["reviews"]
         if isinstance(item, dict)
-        and reviewer_login(item.get("author") or item.get("user")) == FIN_REVIEW_LOGIN
+        and reviewer_login(item.get("author") or item.get("user"))
+        in FIN_REVIEW_LOGINS
     ]
     seen = {str(item) for item in state.get("seen_fin_review_item_ids") or []}
     new_items = []
@@ -333,12 +335,7 @@ def recommend_actions(pr, checks, fin_review):
     if pr["closed"]:
         return ["stop_pr_closed"]
     fin_check = checks["fin_review"]
-    fin_check_passed = (
-        fin_check is not None
-        and fin_check["result"] == "pass"
-        and fin_check["conclusion"] == "SUCCESS"
-    )
-    if checks["all_passing"] and fin_check_passed and fin_review["lgtm_for_head"]:
+    if checks["all_passing"] and fin_review["lgtm_for_head"]:
         return ["ready_for_review"]
 
     actions = []
@@ -354,13 +351,24 @@ def recommend_actions(pr, checks, fin_review):
     if generic_failures:
         actions.append("diagnose_ci_failure")
 
-    if fin_check is None:
+    fin_review_unavailable = (
+        pr["is_draft"]
+        and fin_check is not None
+        and fin_check["conclusion"] == "SKIPPED"
+        and not fin_review["lgtm_for_head"]
+        and not findings
+    )
+
+    if fin_review_unavailable:
+        if checks["all_passing"]:
+            actions.append("report_fin_review_unavailable")
+    elif fin_check is None:
         actions.append("request_fin_review" if pr["is_draft"] else "wait_for_fin_review")
     elif fin_check["result"] == "pending":
         actions.append("wait_for_fin_review")
     elif fin_check["result"] == "fail" and not findings:
         actions.append("inspect_or_rerun_fin_review")
-    elif not fin_check_passed and not findings:
+    elif fin_check.get("conclusion") != "SUCCESS" and not findings:
         actions.append("request_fin_review")
     elif not fin_review["lgtm_for_head"] and not findings:
         actions.append("request_fin_review")
@@ -415,7 +423,10 @@ def run_watch(args):
         snapshot = collect_snapshot(args)
         current = snapshot_key(snapshot)
         print_json({"event": "snapshot", "changed": current != previous, "payload": snapshot})
-        if "ready_for_review" in snapshot["actions"] or "stop_pr_closed" in snapshot["actions"]:
+        if any(
+            action in snapshot["actions"]
+            for action in ("ready_for_review", "report_fin_review_unavailable", "stop_pr_closed")
+        ):
             print_json({"event": "stop", "actions": snapshot["actions"], "pr": snapshot["pr"]})
             return 0
         previous = current

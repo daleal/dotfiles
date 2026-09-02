@@ -141,6 +141,25 @@ class ReviewTests(unittest.TestCase):
             result = watcher.fetch_fin_review(pr, {})
         self.assertEqual([item["id"] for item in result["new_items"]], ["10"])
 
+    def test_github_actions_lgtm_for_head_is_recognized(self):
+        pr = {
+            "number": 1,
+            "repo": "fintoc-com/example",
+            "head_sha": "abc",
+            "reviews": [
+                {
+                    "id": "review-1",
+                    "author": {"login": "github-actions"},
+                    "body": "LGTM ✅",
+                    "submittedAt": "2026-09-01T12:00:00Z",
+                    "commit": {"oid": "abc"},
+                }
+            ],
+        }
+        with patch.object(watcher, "gh_api_list_paginated", return_value=[]):
+            result = watcher.fetch_fin_review(pr, {})
+        self.assertTrue(result["lgtm_for_head"])
+
 
 class ActionTests(unittest.TestCase):
     def test_ready_only_when_checks_pass_and_head_has_lgtm(self):
@@ -156,7 +175,7 @@ class ActionTests(unittest.TestCase):
         )
         self.assertEqual(actions, ["request_fin_review"])
 
-    def test_skipped_review_check_is_not_ready(self):
+    def test_skipped_review_check_is_ready_with_lgtm(self):
         checks = sample_checks(
             fin_review={
                 "name": watcher.FIN_REVIEW_CHECK,
@@ -167,7 +186,37 @@ class ActionTests(unittest.TestCase):
         actions = watcher.recommend_actions(
             sample_pr(), checks, {"lgtm_for_head": True, "new_items": []}
         )
-        self.assertEqual(actions, ["request_fin_review"])
+        self.assertEqual(actions, ["ready_for_review"])
+
+    def test_draft_with_skipped_review_reports_unavailable_after_ci(self):
+        checks = sample_checks(
+            fin_review={
+                "name": watcher.FIN_REVIEW_CHECK,
+                "result": "pass",
+                "conclusion": "SKIPPED",
+            }
+        )
+        actions = watcher.recommend_actions(
+            sample_pr(is_draft=True), checks, {"lgtm_for_head": False, "new_items": []}
+        )
+        self.assertEqual(actions, ["report_fin_review_unavailable"])
+
+    def test_draft_with_unavailable_review_still_waits_for_ci(self):
+        pending = [{"name": "ci/tests", "result": "pending"}]
+        checks = sample_checks(
+            all_passing=False,
+            pending_count=1,
+            pending=pending,
+            fin_review={
+                "name": watcher.FIN_REVIEW_CHECK,
+                "result": "pass",
+                "conclusion": "SKIPPED",
+            },
+        )
+        actions = watcher.recommend_actions(
+            sample_pr(is_draft=True), checks, {"lgtm_for_head": False, "new_items": []}
+        )
+        self.assertEqual(actions, ["wait_for_checks"])
 
     def test_review_findings_precede_generic_ci_failure(self):
         failed = [
