@@ -8,4 +8,5 @@ nano
 pkg-config
 rbenv
 unzip
+watchman
 zsh
