@@ -21,7 +21,7 @@ windows:
 
   - name: webserver
     commands:
-      - doppler run -- bundle exec rails server
+      - doppler run -- bundle exec rails server --binding 0.0.0.0
 
   - name: databases
     commands:
