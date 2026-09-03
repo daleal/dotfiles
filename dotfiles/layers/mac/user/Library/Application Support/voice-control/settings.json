@@ -1,0 +1,64 @@
+{
+  "commands_enabled": false,
+  "release_microphone_while_idle": true,
+  "sound_effects": true,
+  "sound_effect_volume": 0.5,
+  "microphone": null,
+  "recording_audio_behavior": "do_nothing",
+  "double_tap_lock": true,
+  "double_tap_only": false,
+  "dictation_hotkey": {
+    "modifiers": {
+      "control": null,
+      "option": null,
+      "shift": null,
+      "command": null,
+      "function": true
+    },
+    "key": {
+      "code": 105,
+      "label": "F13"
+    }
+  },
+  "edit_hotkey": {
+    "modifiers": {
+      "control": null,
+      "option": "either",
+      "shift": null,
+      "command": "either",
+      "function": false
+    },
+    "key": null
+  },
+  "paste_last_hotkey": null,
+  "show_dock_icon": false,
+  "transcription": {
+    "model": "whisper_large_v3_turbo",
+    "language": "es",
+    "recognition_hints": ""
+  },
+  "dictation_processing": {
+    "default_mode": {
+      "name": "Global",
+      "applications": [],
+      "browser_hosts": [],
+      "replacements": [],
+      "transformations": [],
+      "post_processing": {
+        "enabled": true,
+        "prompt": "Rewrite the transcript into clear, natural text while preserving the speaker's dialect, intended meaning and original tone.",
+        "model": "openrouter/z-ai/glm-5.3-flash",
+        "variant": "low",
+        "deadline_seconds": 10
+      }
+    },
+    "modes": []
+  },
+  "voice_action": {
+    "enabled": false,
+    "model": null,
+    "variant": null,
+    "deadline_seconds": 60
+  },
+  "history_retention": "week"
+}
