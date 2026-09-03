@@ -2,6 +2,3 @@
 set -euo pipefail
 
 brew services start clipaste
-
-# One-time setup: run `clipaste ssh-setup remote.dev.fin`.
-# `dotfiles/layers/work/user/.config/shell/aliases.d/remote.sh` owns the reverse tunnel.

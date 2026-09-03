@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+pane="${1:?Usage: tmux-opencode-paste PANE_ID}"
+cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/clipaste"
+buffer="opencode-image-$$"
+image=''
+keep_image=false
+
+fail() {
+  tmux display-message -t "$pane" -d 5000 "Image paste: $1" 2>/dev/null || true
+  printf 'Image paste: %s\n' "$1" >&2
+  exit 1
+}
+
+cleanup() {
+  tmux delete-buffer -b "$buffer" 2>/dev/null || true
+  if [[ "$keep_image" == false && -n "$image" ]]; then
+    rm -f -- "$image"
+  fi
+}
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+is_opencode() {
+  [[ "$(tmux display-message -p -t "$pane" '#{pane_current_command}:#{pane_in_mode}' 2>/dev/null)" == 'opencode2:0' ]]
+}
+
+is_opencode || fail 'The target pane is no longer running OpenCode.'
+
+umask 077
+mkdir -p -- "$cache_dir" || fail 'Could not create the image cache.'
+image="$(mktemp "$cache_dir/clipboard-XXXXXXXX.png")" || fail 'Could not create an image file.'
+
+# V2 reads the native host clipboard, bypassing clipaste's wl-paste/xclip shims.
+# Match OpenCode's 20 MiB local attachment limit and bound tunnel failures.
+curl --fail --silent --show-error --noproxy '*' \
+  --connect-timeout 2 --max-time 10 --max-filesize 20971520 \
+  --output "$image" http://127.0.0.1:18340/clipboard/image \
+  || fail 'Could not fetch the image. Check clipaste and the SSH tunnel; limit is 20 MiB.'
+
+[[ -s "$image" ]] || fail 'No image available. Copy a screenshot on the Mac first.'
+signature="$(od -An -tx1 -N8 "$image" | tr -d ' \n')"
+[[ "$signature" == 89504e470d0a1a0a ]] || fail 'Clipaste did not return a PNG image.'
+
+# Do not paste into a shell if OpenCode exited while the download was running.
+is_opencode || fail 'The target pane is no longer running OpenCode.'
+tmux set-buffer -b "$buffer" -- "$image" || fail 'Could not create the paste buffer.'
+tmux paste-buffer -d -p -t "$pane" -b "$buffer" || fail 'Could not paste into OpenCode.'
+
+# OpenCode reads the file asynchronously after receiving the bracketed paste.
+# Keep successful downloads in the private cache, not in the current project.
+keep_image=true

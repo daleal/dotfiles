@@ -76,3 +76,4 @@ identity-specific things.
 - Profile prompts save the validated selection to the ignored root `.profile`; explicit profile arguments bypass and never update that default.
 - Uninstall is intentionally config-only: top-level `uninstall` delegates to `dotfiles/uninstall`, which unstows profile layers in reverse order. It does not remove packages, reverse install scripts, or restore overwritten unmanaged files.
 - `remotework` runs under Google OS Login, whose NSS users are not present in `/etc/passwd`; its Zsh setup uses `.profile` instead of `usermod`.
+- OpenCode V2's native clipboard reader bypasses clipaste's `wl-paste`/`xclip` shims. In `remotework`, tmux intercepts Ctrl+V only in `opencode2` panes and uses `tmux-opencode-paste` to fetch a PNG over the existing port 18340 tunnel and bracket-paste its path. Successful downloads remain in `${XDG_CACHE_HOME:-~/.cache}/clipaste` so asynchronous attachment reads can finish.
