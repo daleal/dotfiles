@@ -22,7 +22,13 @@ remote() {
     # daleal-specific
     6969 # Opentasks
   )
+
+  local -a remote_forwarded_ports=(
+    18340 # clipaste
+  )
+
   local -a forward_options=()
+  local -a remote_forward_options=()
   if [[ "${1:-}" == "--forward-ports" ]]; then
     local ports="${2:-}"
     if [[ $# -ne 2 || -z "$ports" ]]; then
@@ -52,8 +58,11 @@ remote() {
   for port in "${opened_ports[@]}"; do
     forward_options+=(-L "$port:127.0.0.1:$port")
   done
+  for port in "${remote_forwarded_ports[@]}"; do
+    remote_forward_options+=(-R "$port:127.0.0.1:$port")
+  done
 
-  command ssh -t "${forward_options[@]}" \
+  command ssh -t "${forward_options[@]}" "${remote_forward_options[@]}" \
     remote.dev.fin \
     'if tmux has-session 2>/dev/null; then exec tmux attach-session; else exec /usr/local/bin/smug start home --attach; fi'
   local ssh_status=$?
