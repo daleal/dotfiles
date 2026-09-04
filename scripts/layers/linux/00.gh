@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Keep variables and the cleanup trap isolated when sourced by scripts/install.
+(
+  sudo apt-get update
+  sudo apt-get install -y ca-certificates curl gnupg
+
+  mkdir -p ./tmp
+  tmp_dir="$(mktemp -d ./tmp/gh-install.XXXXXX)"
+  trap 'rm -rf "$tmp_dir"' EXIT
+
+  curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+    -o "$tmp_dir/githubcli-archive-keyring.gpg"
+
+  # Verify every primary key against the fingerprints in the official docs:
+  # https://github.com/cli/cli/blob/trunk/docs/install_linux.md
+  fingerprints="$(gpg --batch --show-keys --with-colons --with-fingerprint \
+    "$tmp_dir/githubcli-archive-keyring.gpg" | \
+    awk -F: '$1 == "pub" { primary = 1; next }
+      $1 == "fpr" && primary { print $10; primary = 0 }')"
+
+  if [[ -z "$fingerprints" ]]; then
+    echo "No GitHub CLI signing keys found" >&2
+    exit 1
+  fi
+
+  while IFS= read -r fingerprint; do
+    case "$fingerprint" in
+      2C6106201985B60E6C7AC87323F3D4EA75716059|7F38BBB59D064DBCB3D84D725612B36462313325)
+        ;;
+      *)
+        echo "Unexpected GitHub CLI signing key: $fingerprint" >&2
+        exit 1
+        ;;
+    esac
+  done <<< "$fingerprints"
+
+  sudo install -d -m 0755 /etc/apt/keyrings /etc/apt/sources.list.d
+  sudo install -m 0644 "$tmp_dir/githubcli-archive-keyring.gpg" \
+    /etc/apt/keyrings/githubcli-archive-keyring.gpg
+
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+    | sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null
+
+  sudo apt-get update
+)

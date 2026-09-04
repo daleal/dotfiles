@@ -44,7 +44,7 @@ Config files mirror their target path. Example: ghostty config lives at
 | `mac`        | macOS-only (Ghostty, keyboard layout)                       |
 | `personal`   | Personal identity and OpenCode runtime                      |
 | `work`       | Work identity and tooling (OpenCode, Linear MCP, pr, tmux)  |
-| `linux`      | Linux-only packages                                         |
+| `linux`      | Linux-only packages and install scripts                     |
 | `neoremote`  | Remote development (OpenCode, tmux/Smug, Git)               |
 | `remotework` | Remote work tooling with work identity and project configs  |
 
