@@ -57,6 +57,12 @@
         "url": "https://mcp.notion.com/mcp",
         "oauth": { "callback_port": 3118 },
       },
+      "figma": {
+        "type": "remote",
+        // Figma desktop on the Mac, reverse-forwarded by dotfiles/layers/work/user/.config/shell/aliases.d/remote.sh
+        "url": "http://127.0.0.1:3845/mcp",
+        "oauth": false,
+      },
       "slack": {
         "type": "remote",
         "url": "https://mcp.slack.com/mcp",
