@@ -37,6 +37,7 @@
     "language": "es",
     "recognition_hints": ""
   },
+  "transcription_recents": [],
   "dictation_processing": {
     "default_mode": {
       "name": "Global",
@@ -46,9 +47,9 @@
       "transformations": [],
       "post_processing": {
         "enabled": true,
-        "prompt": "Rewrite the transcript into clear, natural text while preserving the speaker's dialect, intended meaning and original tone.",
-        "model": "openrouter/z-ai/glm-5.3-flash",
-        "variant": "low",
+        "prompt": "Rewrite the transcript into clear, natural text while preserving the speaker's dialect, intended meaning and original tone.\nUser is chilean. Remove initial question marks and exclamation marks, leave only closing ones. Don't capitalize text after points, but leave name and other inline capitalizations.",
+        "model": "openrouter/thinkingmachines/inkling",
+        "variant": "minimal",
         "deadline_seconds": 10
       }
     },
