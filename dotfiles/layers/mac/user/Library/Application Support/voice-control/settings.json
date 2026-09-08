@@ -47,7 +47,7 @@
       "transformations": [],
       "post_processing": {
         "enabled": true,
-        "prompt": "Rewrite the transcript into clear, natural text while preserving the speaker's dialect, intended meaning and original tone.\nUser is chilean. Remove initial question marks and exclamation marks, leave only closing ones. Don't capitalize text after points, but leave name and other inline capitalizations.",
+        "prompt": "Rewrite the transcript into clear, natural text while preserving the speaker's dialect, intended meaning and original tone.\nUser is chilean. Remove initial question marks and exclamation marks, leave only closing ones. Don't capitalize text after points, but leave name and other inline capitalizations. Don't add a final dot to the text.",
         "model": "openrouter/thinkingmachines/inkling",
         "variant": "minimal",
         "deadline_seconds": 10
