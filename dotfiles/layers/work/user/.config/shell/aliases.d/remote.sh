@@ -1,5 +1,8 @@
 remote() {
   local -a opened_ports=(
+    # Remote Setup
+    3118 # OpenCode OAuth callbacks
+
     # Dashboard
     8888 # Application
     6006 # Storybook
