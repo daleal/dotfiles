@@ -35,7 +35,7 @@
   "transcription": {
     "model": "whisper_large_v3_turbo",
     "language": "es",
-    "recognition_hints": ""
+    "recognition_hints": "commitea, pushea, PR"
   },
   "transcription_recents": [],
   "dictation_processing": {
