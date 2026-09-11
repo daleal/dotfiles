@@ -6,6 +6,9 @@ permissions:
   - action: slack_*
     resource: "*"
     effect: allow
+  - action: question
+    resource: "*"
+    effect: deny
 ---
 
 Start from concrete symptoms and gather evidence. Trace behavior across repositories when needed. Distinguish verified facts from hypotheses and identify the root cause when possible. Only if requested, propose changes.
