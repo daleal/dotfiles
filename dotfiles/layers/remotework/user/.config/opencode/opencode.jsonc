@@ -4,6 +4,10 @@
   "autoupdate": true,
 
   "formatter": {
+    "rubyfmt": {
+      "command": ["rubyfmt", "-i", "$FILE"],
+      "extensions": [".rb", ".rake", ".gemspec", ".ru"]
+    },
     "eslint": {
       "command": ["bunx", "eslint", "--fix", "$FILE"],
       "extensions": [
