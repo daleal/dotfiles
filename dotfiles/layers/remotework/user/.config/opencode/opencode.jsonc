@@ -91,6 +91,7 @@
   },
 
   "permissions": [
+    { "action": "browser", "resource": "*", "effect": "deny" },
     { "action": "subagent", "resource": "review", "effect": "deny" },
     { "action": "subagent", "resource": "pr", "effect": "deny" },
     { "action": "slack_*", "resource": "*", "effect": "deny" },

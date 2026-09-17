@@ -46,6 +46,7 @@
   },
 
   "permissions": [
+    { "action": "browser", "resource": "*", "effect": "deny" },
     { "action": "subagent", "resource": "review", "effect": "deny" },
   ],
 }
