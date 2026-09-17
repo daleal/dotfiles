@@ -68,6 +68,11 @@
           "redirect_uri": "http://localhost:3118/callback",
         },
       },
+      "sentry": {
+        "type": "remote",
+        "url": "https://mcp.sentry.dev/mcp",
+        "oauth": { "callback_port": 3118 },
+      },
       "figma": {
         "type": "remote",
         // Figma desktop on the Mac, reverse-forwarded by dotfiles/layers/work/user/.config/shell/aliases.d/remote.sh
