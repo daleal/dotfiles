@@ -24,7 +24,7 @@ trap 'exit 130' INT
 trap 'exit 143' TERM
 
 is_opencode() {
-  [[ "$(tmux display-message -p -t "$pane" '#{pane_current_command}:#{pane_in_mode}' 2>/dev/null)" == 'opencode2:0' ]]
+  [[ "$(tmux display-message -p -t "$pane" '#{pane_current_command}:#{pane_in_mode}' 2>/dev/null)" == 'opencode:0' ]]
 }
 
 is_opencode || fail 'The target pane is no longer running OpenCode.'

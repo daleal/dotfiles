@@ -1,3 +1,0 @@
-opencode() {
-  command opencode2 "$@"
-}
