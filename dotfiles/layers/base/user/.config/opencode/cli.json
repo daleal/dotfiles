@@ -6,7 +6,8 @@
   "animations": true,
   "session": {
     "sidebar": "auto",
-    "scrollbar": false
+    "scrollbar": false,
+    "image_preview": true
   },
   "tabs": {
     "enabled": false
