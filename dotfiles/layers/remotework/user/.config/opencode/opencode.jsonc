@@ -60,6 +60,11 @@
         "url": "https://mcp.linear.app/mcp",
         "oauth": { "callback_port": 3118 },
       },
+      "mixpanel": {
+        "type": "remote",
+        "url": "https://mcp.mixpanel.com/mcp",
+        "oauth": { "callback_port": 3118 },
+      },
       "notion": {
         "type": "remote",
         "url": "https://mcp.notion.com/mcp",

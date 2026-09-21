@@ -59,6 +59,10 @@
         "type": "remote",
         "url": "https://mcp.linear.app/mcp",
       },
+      "mixpanel": {
+        "type": "remote",
+        "url": "https://mcp.mixpanel.com/mcp",
+      },
       "notion": {
         "type": "remote",
         "url": "https://mcp.notion.com/mcp",
