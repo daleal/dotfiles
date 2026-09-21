@@ -51,6 +51,10 @@
 
   "mcp": {
     "servers": {
+      "fiend": {
+        "type": "remote",
+        "url": "https://anoma.ly/labs/fiend/mcp",
+      },
       "linear": {
         "type": "remote",
         "url": "https://mcp.linear.app/mcp",
