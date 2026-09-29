@@ -1,8 +1,6 @@
 ---
 name: commit
 description: Proposes a commit plan. Use when you need to plan, propose or create git commits.
-metadata:
-  opencode/slash: true
 ---
 
 # Committing Staged Changes
