@@ -58,4 +58,5 @@ Literally write "Tests unitarios", no need to describe every test you added/chan
 - DO NOT add AI attribution in the PR body.
 - DO NOT use bullets in the PR body. Instead, write terse paragraphs.
 - Always match the writing style of the user.
+- In Spanish, use "la PR", not "el PR".
 - Backticks on the body (as inline code) get interpreted by the shell, so you should escape them with a backslash if you need to use them in the body.
