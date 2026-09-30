@@ -73,6 +73,7 @@ identity-specific things.
 
 ## Good to know
 
+- Every OpenCode config explicitly allows `external_directory` access to `~/.agents/skills/*` so installed skill references do not prompt for outside-project approval.
 - Profile prompts save the validated selection to the ignored root `.profile`; explicit profile arguments bypass and never update that default.
 - Uninstall is intentionally config-only: top-level `uninstall` delegates to `dotfiles/uninstall`, which unstows profile layers in reverse order. It does not remove packages, reverse install scripts, or restore overwritten unmanaged files.
 - `remotework` runs under Google OS Login, whose NSS users are not present in `/etc/passwd`; its Zsh setup uses `.profile` instead of `usermod`.

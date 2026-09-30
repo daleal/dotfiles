@@ -55,6 +55,7 @@
   },
 
   "permissions": [
+    { "action": "external_directory", "resource": "~/.agents/skills/*", "effect": "allow" },
     { "action": "question", "resource": "*", "effect": "deny" },
     { "action": "browser", "resource": "*", "effect": "deny" },
     { "action": "subagent", "resource": "review", "effect": "deny" },
