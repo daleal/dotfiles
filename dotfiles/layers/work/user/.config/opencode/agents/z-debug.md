@@ -3,9 +3,6 @@ description: Debugger agent that can trace behavior across repositories and iden
 mode: primary
 color: "#f59e0b"
 permissions:
-  - action: slack_*
-    resource: "*"
-    effect: allow
   - action: question
     resource: "*"
     effect: deny
