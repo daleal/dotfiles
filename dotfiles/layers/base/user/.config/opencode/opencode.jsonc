@@ -60,4 +60,6 @@
     { "action": "browser", "resource": "*", "effect": "deny" },
     { "action": "subagent", "resource": "review", "effect": "deny" },
   ],
+
+  "plugins": ["opencode-claude-auth-v2@latest"],
 }
