@@ -42,7 +42,7 @@ Config files mirror their target path. Example: ghostty config lives at
 | ------------ | ----------------------------------------------------------- |
 | `base`       | Cross-platform configs (OpenCode, Zed, etc.)                |
 | `mac`        | macOS-only (Ghostty, keyboard layout)                       |
-| `personal`   | Personal identity and OpenCode runtime                      |
+| `personal`   | Personal identity, OpenCode runtime, Railway CLI and skill  |
 | `work`       | Work identity and tooling (OpenCode, Linear MCP, pr, tmux)  |
 | `linux`      | Linux-only packages and install scripts                     |
 | `neoremote`  | Remote development (OpenCode, tmux/Smug, Git)               |
@@ -75,6 +75,7 @@ identity-specific things.
 
 - Every OpenCode config explicitly allows `external_directory` access to `~/.agents/skills/*` so installed skill references do not prompt for outside-project approval.
 - Profile prompts save the validated selection to the ignored root `.profile`; explicit profile arguments bypass and never update that default.
+- Agents run non-interactive shells that skip `.zshrc`, so CLI PATH setup that agents need (e.g. Railway's `~/.railway/env`) goes in `~/.zshenv`.
 - Uninstall is intentionally config-only: top-level `uninstall` delegates to `dotfiles/uninstall`, which unstows profile layers in reverse order. It does not remove packages, reverse install scripts, or restore overwritten unmanaged files.
 - `remotework` runs under Google OS Login, whose NSS users are not present in `/etc/passwd`; its Zsh setup uses `.profile` instead of `usermod`.
 - OpenCode V2's native clipboard reader bypasses clipaste's `wl-paste`/`xclip` shims. In `remotework`, tmux intercepts Ctrl+V only in `opencode` panes and uses `tmux-opencode-paste` to fetch a PNG over the existing port 18340 tunnel and bracket-paste its path. Successful downloads remain in `${XDG_CACHE_HOME:-~/.cache}/clipaste` so asynchronous attachment reads can finish.

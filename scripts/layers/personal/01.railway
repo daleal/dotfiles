@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ZSHENV="$HOME/.zshenv"
+SNIPPET='. "$HOME/.railway/env"'
+
+# With railway already on PATH, the installer leaves ~/.zshrc untouched
+export PATH="$HOME/.railway/bin:$PATH"
+bash <(curl -fsSL https://railway.com/install.sh) -y
+
+if ! grep -qxF "$SNIPPET" "$ZSHENV" 2>/dev/null; then
+  printf '%s\n' "$SNIPPET" >> "$ZSHENV"
+fi
