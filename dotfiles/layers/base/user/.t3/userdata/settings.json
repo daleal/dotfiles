@@ -1,0 +1,64 @@
+{
+  "storageCleanup": {
+    "worktreeOnMerge": true,
+    "worktreeOnDelete": true
+  },
+  "continueThreadsAfterServerUpdate": true,
+  "defaultAutoPull": true,
+  "defaultModelSelection": {
+    "instanceId": "opencode",
+    "model": "anthropic/claude-opus-5-5",
+    "options": [
+      {
+        "id": "variant",
+        "value": "medium"
+      }
+    ]
+  },
+  "projectSettingsOverrides": {
+    "c9fcffae-fef6-4704-8723-79e08c434273": {
+      "defaultThreadEnvMode": "local"
+    }
+  },
+  "projectSettingsFolded": true,
+  "enableDeviceSupport": true,
+  "deviceOnboardingCompleted": true,
+  "sidebarAutoSettleAfterDays": null,
+  "backgroundActivity": {
+    "schemaVersion": 1,
+    "profile": "performance",
+    "overrides": {}
+  },
+  "automaticGitFetchInterval": 15000,
+  "providerHealthRefreshInterval": 60000,
+  "backgroundActivityProfile": "performance",
+  "defaultThreadEnvMode": "worktree",
+  "addProjectBaseDirectory": "~/Documents/projects/",
+  "textGenerationModelSelection": {
+    "instanceId": "opencode",
+    "model": "openai/gpt-6-luna-fast"
+  },
+  "branchNamingMode": "semantic",
+  "sourceControlWritingStyle": {
+    "mode": "conventional_commits"
+  },
+  "providerInstances": {
+    "codex": {
+      "driver": "codex",
+      "enabled": true,
+      "config": {
+        "binaryPath": "codex",
+        "homePath": "",
+        "shadowHomePath": "",
+        "launchArgs": "",
+        "customModels": [],
+        "setupMode": "managed"
+      }
+    },
+    "opencode": {
+      "driver": "opencode",
+      "displayName": "OpenCode",
+      "enabled": true
+    }
+  }
+}
