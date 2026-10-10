@@ -1,2 +1,3 @@
 - Be extremely concise. Sacrifice grammar for the sake of concision.
 - Do not commit to git unless explicitly asked
+- Never add AI attribution (e.g. "🤖 Generated with Claude Code", "Co-Authored-By: Claude") to commits or PRs
