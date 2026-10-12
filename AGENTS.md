@@ -35,6 +35,7 @@ Config files mirror their target path. Example: ghostty config lives at
 - `--override='.*'`: later layers can override earlier ones
 - README.md files inside layer dirs are ignored by stow
 - Install removes unmanaged target files reported by both old and current GNU Stow diagnostics before retrying
+- A directory containing a `.stow-link-dir` marker is symlinked whole (absolute link) instead of per file: stow ignores it and `lib/linked-dirs.sh` manages the link. Install clears stale per-file repo symlinks inside the target dir first; if unmanaged files remain, it warns and skips
 
 ## Layer responsibilities
 
