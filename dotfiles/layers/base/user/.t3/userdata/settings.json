@@ -1,9 +1,36 @@
 {
+  "favorites": [
+    {
+      "provider": "opencode",
+      "model": "openai/gpt-6.1-sol-fast"
+    },
+    {
+      "provider": "opencode",
+      "model": "openai/gpt-6-astra-fast"
+    },
+    {
+      "provider": "opencode",
+      "model": "openai/gpt-6-astra"
+    },
+    {
+      "provider": "opencode",
+      "model": "anthropic/claude-opus-5-5"
+    }
+  ],
+  "providerModelPreferences": {
+    "claudeAgent": {
+      "hiddenModels": [],
+      "modelOrder": []
+    },
+    "codex": {
+      "hiddenModels": [],
+      "modelOrder": []
+    }
+  },
   "storageCleanup": {
     "worktreeOnMerge": true,
     "worktreeOnDelete": true
   },
-  "continueThreadsAfterServerUpdate": true,
   "defaultAutoPull": true,
   "defaultModelSelection": {
     "instanceId": "opencode",
@@ -33,7 +60,6 @@
   "providerHealthRefreshInterval": 60000,
   "backgroundActivityProfile": "performance",
   "defaultThreadEnvMode": "worktree",
-  "addProjectBaseDirectory": "~/Documents/projects/",
   "textGenerationModelSelection": {
     "instanceId": "opencode",
     "model": "openai/gpt-6-luna-fast"
