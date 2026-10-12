@@ -7,6 +7,7 @@ REPO_DIR="$(dirname "$DIR")"
 STOW_IGNORE='(^|/)README\.md$'
 
 source "$REPO_DIR/lib/profile.sh"
+source "$REPO_DIR/lib/linked-dirs.sh"
 select_profile "$REPO_DIR" "${1:-}"
 
 STOW_ARGS=(-D --no-folding --override='.*' --ignore "$STOW_IGNORE")
@@ -24,13 +25,19 @@ for ((i = ${#PROFILE_LAYERS[@]} - 1; i >= 0; i--)); do
   if [[ -d "$LAYER_DIR/user" ]]; then
     echo ""
     echo "Unstowing user configs from layer '$layer'..."
-    stow -v "${STOW_ARGS[@]}" -t "$HOME" -d "$LAYER_DIR" user
+    unlink_dirs "$LAYER_DIR/user" "$HOME"
+    ARGS=("${STOW_ARGS[@]}")
+    while IFS= read -r arg; do ARGS+=("$arg"); done < <(linked_dir_ignore_args "$LAYER_DIR/user")
+    stow -v "${ARGS[@]}" -t "$HOME" -d "$LAYER_DIR" user
   fi
 
   if [[ -d "$LAYER_DIR/system" ]]; then
     echo ""
     echo "Unstowing system configs from layer '$layer'..."
-    sudo stow -v "${STOW_ARGS[@]}" -t / -d "$LAYER_DIR" system
+    unlink_dirs "$LAYER_DIR/system" "" sudo
+    ARGS=("${STOW_ARGS[@]}")
+    while IFS= read -r arg; do ARGS+=("$arg"); done < <(linked_dir_ignore_args "$LAYER_DIR/system")
+    sudo stow -v "${ARGS[@]}" -t / -d "$LAYER_DIR" system
   fi
 done
 

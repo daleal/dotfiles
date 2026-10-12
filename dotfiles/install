@@ -7,6 +7,7 @@ REPO_DIR="$(dirname "$DIR")"
 STOW_IGNORE='(^|/)README\.md$'
 
 source "$REPO_DIR/lib/profile.sh"
+source "$REPO_DIR/lib/linked-dirs.sh"
 select_profile "$REPO_DIR" "${1:-}"
 
 clear_conflicts() {
@@ -67,15 +68,21 @@ for layer in "${PROFILE_LAYERS[@]}"; do
   if [[ -d "$LAYER_DIR/user" ]]; then
     echo ""
     echo "Stowing user configs from layer '$layer'..."
-    clear_conflicts "$HOME" "${STOW_ARGS[@]}" -t "$HOME" -d "$LAYER_DIR" user
-    stow -v "${STOW_ARGS[@]}" -t "$HOME" -d "$LAYER_DIR" user || true
+    ARGS=("${STOW_ARGS[@]}")
+    while IFS= read -r arg; do ARGS+=("$arg"); done < <(linked_dir_ignore_args "$LAYER_DIR/user")
+    clear_conflicts "$HOME" "${ARGS[@]}" -t "$HOME" -d "$LAYER_DIR" user
+    stow -v "${ARGS[@]}" -t "$HOME" -d "$LAYER_DIR" user || true
+    link_dirs "$LAYER_DIR/user" "$HOME" "$REPO_DIR"
   fi
 
   if [[ -d "$LAYER_DIR/system" ]]; then
     echo ""
     echo "Stowing system configs from layer '$layer'..."
-    clear_conflicts_sudo "/" "${STOW_ARGS[@]}" -t / -d "$LAYER_DIR" system
-    sudo stow -v "${STOW_ARGS[@]}" -t / -d "$LAYER_DIR" system || true
+    ARGS=("${STOW_ARGS[@]}")
+    while IFS= read -r arg; do ARGS+=("$arg"); done < <(linked_dir_ignore_args "$LAYER_DIR/system")
+    clear_conflicts_sudo "/" "${ARGS[@]}" -t / -d "$LAYER_DIR" system
+    sudo stow -v "${ARGS[@]}" -t / -d "$LAYER_DIR" system || true
+    link_dirs "$LAYER_DIR/system" "" "$REPO_DIR" sudo
   fi
 done
 
