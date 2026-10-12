@@ -65,8 +65,14 @@
     "model": "openai/gpt-6-luna-fast"
   },
   "branchNamingMode": "semantic",
+  "removeAgentCreditsOnMerge": true,
   "sourceControlWritingStyle": {
     "mode": "conventional_commits"
+  },
+  "reviewGuidesEnabled": true,
+  "reviewGuideModelSelection": {
+    "instanceId": "opencode",
+    "model": "openai/gpt-6.1-sol-fast"
   },
   "providerInstances": {
     "codex": {
