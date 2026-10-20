@@ -7,6 +7,7 @@
   "recording_audio_behavior": "do_nothing",
   "double_tap_lock": true,
   "double_tap_only": false,
+  "shortcut_mode": "hold",
   "dictation_hotkey": {
     "modifiers": {
       "control": null,
@@ -61,8 +62,8 @@
       "post_processing": {
         "enabled": true,
         "prompt": "Rewrite the transcript into clear, natural text while preserving the speaker's dialect, intended meaning and original tone.\nUser is chilean. Remove initial question marks and exclamation marks, leave only closing ones. Don't capitalize text after points, but leave name and other inline capitalizations. Don't add a final dot to the text.",
-        "model": "openrouter/thinkingmachines/inkling-small",
-        "variant": "minimal",
+        "model": "anthropic/claude-haiku-5-5",
+        "variant": "low",
         "deadline_seconds": 10
       }
     },
@@ -74,5 +75,17 @@
     "variant": null,
     "deadline_seconds": 60
   },
-  "history_retention": "week"
+  "history_retention": "week",
+  "meetings": {
+    "enabled": true,
+    "output_folder": "~/hex/meetings",
+    "summarize_with_apple_intelligence": true
+  },
+  "enable_on_launch": true,
+  "paste_with_shift": false,
+  "ui_language": null,
+  "indicator_position": "top",
+  "migrations": [
+    "streaming-english-model"
+  ]
 }
