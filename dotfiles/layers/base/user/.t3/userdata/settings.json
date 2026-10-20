@@ -71,8 +71,14 @@
   },
   "reviewGuidesEnabled": true,
   "reviewGuideModelSelection": {
-    "instanceId": "opencode",
-    "model": "openai/gpt-6.1-sol-fast"
+    "instanceId": "codex",
+    "model": "gpt-6.1-sol",
+    "options": [
+      {
+        "id": "reasoningEffort",
+        "value": "medium"
+      }
+    ]
   },
   "providerInstances": {
     "codex": {
