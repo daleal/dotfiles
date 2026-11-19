@@ -78,11 +78,10 @@
           "redirect_uri": "http://localhost:3118/callback",
         },
       },
-      // "sentry": {
-      //   "type": "remote",
-      //   "url": "https://mcp.sentry.dev/mcp",
-      //   "oauth": { "callback_port": 3118 },
-      // },
+      "sentry": {
+        "type": "remote",
+        "url": "https://mcp.sentry.dev/mcp",
+      },
       "figma": {
         "type": "remote",
         "url": "https://mcp.figma.com/mcp",
