@@ -42,15 +42,12 @@
       }
     ]
   },
-  "projectSettingsOverrides": {
-    "c9fcffae-fef6-4704-8723-79e08c434273": {
-      "defaultThreadEnvMode": "local"
-    }
-  },
   "projectSettingsFolded": true,
+  "enableAgentDeviceAccess": true,
   "enableDeviceSupport": true,
   "deviceOnboardingCompleted": true,
   "sidebarAutoSettleAfterDays": null,
+  "idleCompaction": "onReturn",
   "backgroundActivity": {
     "schemaVersion": 1,
     "profile": "performance",
