@@ -6,6 +6,7 @@
 [core]
 	editor = zed --wait
 	pager = less
+	hooksPath = /Users/epsilon/.config/githooks/hooks
 [pager]
 	branch = false
 [init]
