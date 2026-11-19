@@ -54,6 +54,7 @@
       "compose": {
         "type": "remote",
         "url": "https://compose.fintoc.dev/api/mcp",
+        "oauth": { "callback_port": 3118 },
       },
       "fiend": {
         "type": "remote",
