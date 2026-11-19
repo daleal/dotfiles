@@ -51,6 +51,10 @@
 
   "mcp": {
     "servers": {
+      "compose": {
+        "type": "remote",
+        "url": "https://compose.fintoc.dev/api/mcp",
+      },
       "fiend": {
         "type": "remote",
         "url": "https://anoma.ly/labs/fiend/mcp",
