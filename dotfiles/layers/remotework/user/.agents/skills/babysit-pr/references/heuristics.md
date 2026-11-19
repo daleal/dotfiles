@@ -18,7 +18,7 @@ Do not use rarity alone as a dismissal. Consider impact, probability, existing i
 
 Ignore `fin-review`'s proposed fix, only evaluate its findings. Decide the appropriate changes based on your own assessment. Remember, you have more context than the `fin-review` bot, so use your judgment to follow its advice.
 
-When declining, reply with `[babysit] <justification>` and cite the relevant invariant or tradeoff. When fixing, reply with `[babysit] fixed in <commit>` and resolve the thread after the push succeeds.
+When declining, reply with `[babysit] <justification>`, cite the relevant invariant or tradeoff and resolve the thread. When fixing, reply with `[babysit] fixed in <commit>` and resolve the thread after the push succeeds.
 
 ## Roadblocks
 
