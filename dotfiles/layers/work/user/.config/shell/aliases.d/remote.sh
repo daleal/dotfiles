@@ -28,7 +28,6 @@ remote() {
 
   local -a remote_forwarded_ports=(
     18340 # clipaste
-    3845 # Figma desktop MCP
   )
 
   local -a forward_options=()

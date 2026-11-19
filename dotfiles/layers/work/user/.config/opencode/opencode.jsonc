@@ -83,6 +83,10 @@
       //   "url": "https://mcp.sentry.dev/mcp",
       //   "oauth": { "callback_port": 3118 },
       // },
+      "figma": {
+        "type": "remote",
+        "url": "https://mcp.figma.com/mcp",
+      },
       "slack": {
         "type": "remote",
         "url": "https://mcp.slack.com/mcp",
