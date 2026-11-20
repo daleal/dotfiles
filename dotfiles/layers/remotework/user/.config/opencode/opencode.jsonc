@@ -82,6 +82,11 @@
           "redirect_uri": "http://localhost:3118/callback",
         },
       },
+      "buildkite": {
+        "type": "remote",
+        "url": "https://mcp.buildkite.com/mcp",
+        "oauth": { "callback_port": 3118 },
+      },
       "sentry": {
         "type": "remote",
         "url": "https://mcp.sentry.dev/mcp",
