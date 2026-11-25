@@ -19,11 +19,11 @@ Accept no argument (infer the PR from the current branch), a PR number, or a PR 
 
 1. Verify that the current branch is the PR head branch and inspect the PR directly with `gh` before making changes.
 2. If the PR is a draft, comment `fin review` once to start the AI review. After a babysitter push, repeat it only if the earlier comment successfully started a review.
-3. Start the watcher in continuous mode and consume its JSONL output in the current session.
+3. Run the watcher with `--watch` to wait for the next actionable event. It polls while only pure wait actions remain (`wait_for_checks`, `wait_for_fin_review`) and exits cleanly with the latest JSONL snapshot and `stop` event as soon as checks or `fin-review` need action or reach a terminal state. Handle the returned action(s), then re-run `--watch` until `ready_for_review` (or a stop condition such as `report_fin_review_unavailable` or `stop_pr_closed`).
 4. Wait for checks to finish after every push. Never assess readiness from checks belonging to an older SHA.
 5. Ignore `hermes/approval-gate` and `bors`; they do not need to pass for babysitting to succeed.
 6. Diagnose any other failed check. Fix failures caused by the branch, commit, push, trigger draft review if needed, and resume watching the new SHA.
-7. Watch `Hermes/pr-pipeline/code-review` specifically. Let it finish before inspecting newly published `fin-review` feedback.
+7. Watch the `fin-review` check (`fin review` / `fin-review`, or legacy `Hermes/pr-pipeline/code-review`) specifically. Let it finish before inspecting newly published `fin-review` feedback.
 8. Evaluate each `fin-review` finding. Fix correct, useful findings; reject speculative edge cases when the added complexity or degraded design outweighs their practical benefit.
   - The `fin-review` bot might propose a fix for a finding. You should ignore its proposed fix, and only evaluate the comment. If something needs to be changed, decide yourself how to fix it.
   - Remember, you have more context than the `fin-review` bot, so use your judgment to follow its advice.
@@ -41,7 +41,7 @@ Do not stop after a push, while checks are pending, after merely replying to rev
 # One-shot diagnostic
 python3 scripts/gh_pr_watch.py --pr auto --once
 
-# Continuous watch
+# Wait until the next actionable event or terminal state (exits when action is needed)
 python3 scripts/gh_pr_watch.py --pr auto --watch
 
 # Trigger fin-review
@@ -55,7 +55,7 @@ Pass `-R <owner/repo>` to `gh` when the current checkout does not identify the t
 
 ## Check Handling
 
-The watcher normalizes duplicate check runs and keeps only the newest result for each check name. This matters because comment-triggered Hermes runs can create several `pr-pipeline / code-review` entries for one SHA.
+The watcher normalizes duplicate check runs and keeps only the newest result for each check name. This matters because comment-triggered runs can create several review check entries (`fin review` or `pr-pipeline / code-review`) for one SHA.
 
 Ignored checks:
 
@@ -73,9 +73,9 @@ Read `references/heuristics.md` before deciding whether to fix or reject a findi
 
 ## Fin Review
 
-`fin-review[bot]` publishes inline review comments and a review result. In some repositories its LGTM review is attributed to `github-actions`; accept either identity when the review targets the current head SHA. Its Hermes check is normalized as `hermes/pr-pipeline/code-review`.
+`fin-review[bot]` publishes inline review comments and a review result. In some repositories its LGTM review is attributed to `github-actions`; accept either identity when the review targets the current head SHA. Its check appears as `fin review` (normalized as `fin-review`) or, in legacy Hermes setups, `hermes/pr-pipeline/code-review`.
 
-When the check is pending, wait. When it fails, inspect the newly surfaced `fin-review` comments before doing anything else.
+When the check is pending, wait. When it finishes—whether with `FAILURE` or with `SUCCESS` and inline comments without `LGTM`—inspect any newly surfaced `fin-review` comments before doing anything else.
 
 For each finding:
 
@@ -129,7 +129,7 @@ Include the concrete roadblock, evidence gathered, and the smallest useful choic
 
 ## Output
 
-During monitoring, report only status changes and occasional concise heartbeats. On success report the PR URL, and its final state (ready for review, checks passing, AI reviewer LGTM, etc).
+Between watch cycles, report only meaningful status changes and actions taken. On success report the PR URL, and its final state (ready for review, checks passing, AI reviewer LGTM, etc).
 
 ## References
 

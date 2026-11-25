@@ -4,12 +4,12 @@
 
 ```bash
 gh pr view <pr> -R <owner/repo> \
-  --json number,url,state,isDraft,headRefName,headRefOid,statusCheckRollup,reviews
+  --json number,url,state,isDraft,headRefName,headRefOid,statusCheckRollup,reviews,comments,commits
 ```
 
-The watcher reads `statusCheckRollup`, normalizes workflow and job names, and selects the latest run per normalized name. It ignores `hermes/approval-gate` and `bors`.
+The watcher reads `statusCheckRollup`, normalizes workflow and job names, and selects the latest run per normalized name. It ignores `hermes/approval-gate` and `bors`, and inspects `comments` and `commits` to detect recently posted `fin review` trigger comments while waiting for the check run to start.
 
-Hermes exposes the reviewer as workflow `Hermes` and job `pr-pipeline / code-review`; the watcher normalizes this to `hermes/pr-pipeline/code-review`.
+The AI reviewer check appears either as CheckRun `fin review` (normalized to `fin-review`) or, on legacy Hermes setups, workflow `Hermes` and job `pr-pipeline / code-review` (normalized to `hermes/pr-pipeline/code-review`). Note that `fin review` may complete with `conclusion: "SUCCESS"` even when it leaves inline findings without an `LGTM`.
 
 ## Trigger review
 

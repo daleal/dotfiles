@@ -9,14 +9,24 @@ import subprocess
 import sys
 import tempfile
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 
 IGNORED_CHECKS = {"bors", "hermes/approval-gate"}
-FIN_REVIEW_CHECK = "hermes/pr-pipeline/code-review"
+FIN_REVIEW_CHECKS = {"hermes/pr-pipeline/code-review", "fin-review"}
 FIN_REVIEW_LOGINS = {"fin-review", "github-actions"}
-PENDING_STATES = {"EXPECTED", "IN_PROGRESS", "PENDING", "QUEUED", "REQUESTED", "WAITING"}
+PENDING_STATES = {
+    "EXPECTED",
+    "IN_PROGRESS",
+    "PENDING",
+    "QUEUED",
+    "REQUESTED",
+    "WAITING",
+}
 PASSING_CONCLUSIONS = {"NEUTRAL", "SKIPPED", "SUCCESS"}
+WAIT_ACTIONS = {"wait_for_checks", "wait_for_fin_review"}
+FIN_REVIEW_REQUEST_GRACE_SECONDS = 120
 
 
 class GhCommandError(RuntimeError):
@@ -32,7 +42,11 @@ def parse_args():
     parser.add_argument("--poll-seconds", type=int, default=30)
     parser.add_argument("--state-file", help="Path to state JSON file")
     parser.add_argument("--once", action="store_true", help="Emit one snapshot")
-    parser.add_argument("--watch", action="store_true", help="Emit JSONL snapshots until ready")
+    parser.add_argument(
+        "--watch",
+        action="store_true",
+        help="Poll and emit JSONL snapshots until an actionable event or terminal state occurs",
+    )
     args = parser.parse_args()
     if args.poll_seconds <= 0:
         parser.error("--poll-seconds must be > 0")
@@ -54,7 +68,9 @@ def gh_text(args, repo=None):
         raise GhCommandError("`gh` command not found") from err
     except subprocess.CalledProcessError as err:
         details = (err.stderr or err.stdout or "").strip()
-        raise GhCommandError(f"GitHub CLI command failed: {' '.join(cmd)}\n{details}") from err
+        raise GhCommandError(
+            f"GitHub CLI command failed: {' '.join(cmd)}\n{details}"
+        ) from err
     return proc.stdout
 
 
@@ -94,7 +110,7 @@ def resolve_pr(pr_spec, repo_override=None):
     cmd.extend(
         [
             "--json",
-            "number,url,state,isDraft,mergedAt,closedAt,headRefName,headRefOid,statusCheckRollup,reviews",
+            "number,url,state,isDraft,mergedAt,closedAt,headRefName,headRefOid,statusCheckRollup,reviews,comments,commits",
         ]
     )
     data = gh_json(cmd, repo=repo_override)
@@ -112,9 +128,13 @@ def resolve_pr(pr_spec, repo_override=None):
         "head_branch": str(data.get("headRefName") or ""),
         "is_draft": bool(data.get("isDraft")),
         "state": state,
-        "closed": bool(data.get("closedAt")) or bool(data.get("mergedAt")) or state != "OPEN",
+        "closed": bool(data.get("closedAt"))
+        or bool(data.get("mergedAt"))
+        or state != "OPEN",
         "checks": data.get("statusCheckRollup") or [],
         "reviews": data.get("reviews") or [],
+        "comments": data.get("comments") or [],
+        "commits": data.get("commits") or [],
     }
 
 
@@ -129,6 +149,7 @@ def normalize_check(raw):
         name = normalize_name(raw.get("context"))
         state = str(raw.get("state") or "").upper()
         timestamp = str(raw.get("startedAt") or "")
+        completed_at = ""
         url = str(raw.get("targetUrl") or "")
         if state in PENDING_STATES:
             result = "pending"
@@ -144,6 +165,7 @@ def normalize_check(raw):
         status = str(raw.get("status") or "").upper()
         conclusion = str(raw.get("conclusion") or "").upper()
         timestamp = str(raw.get("startedAt") or raw.get("completedAt") or "")
+        completed_at = str(raw.get("completedAt") or "")
         url = str(raw.get("detailsUrl") or "")
         if status != "COMPLETED" or not conclusion:
             result = "pending"
@@ -157,8 +179,39 @@ def normalize_check(raw):
         "ignored": name in IGNORED_CHECKS,
         "conclusion": conclusion,
         "timestamp": timestamp,
+        "completed_at": completed_at,
         "url": url,
     }
+
+
+def select_preferred_check(current, candidate):
+    if current is None:
+        return candidate
+    # Comment-triggered runs can add SKIPPED duplicates. A skipped run does not
+    # supersede a substantive run for the same job and SHA.
+    current_skipped = current["conclusion"] == "SKIPPED"
+    candidate_skipped = candidate["conclusion"] == "SKIPPED"
+    if candidate_skipped and not current_skipped:
+        return current
+    if current_skipped and not candidate_skipped:
+        return candidate
+    # Newly queued checks may not have startedAt yet; do not let an older
+    # completed run hide an active queued run.
+    if (
+        candidate["result"] == "pending"
+        and not candidate["timestamp"]
+        and current["result"] != "pending"
+    ):
+        return candidate
+    if (
+        current["result"] == "pending"
+        and not current["timestamp"]
+        and candidate["result"] != "pending"
+    ):
+        return current
+    if candidate["timestamp"] >= current["timestamp"]:
+        return candidate
+    return current
 
 
 def latest_checks(raw_checks):
@@ -167,21 +220,7 @@ def latest_checks(raw_checks):
         if not isinstance(raw, dict):
             continue
         check = normalize_check(raw)
-        previous = latest.get(check["name"])
-        if previous is None:
-            latest[check["name"]] = check
-            continue
-        # Comment-triggered Hermes runs add SKIPPED duplicates. A skipped run
-        # does not supersede a substantive run for the same job and SHA.
-        previous_skipped = previous["conclusion"] == "SKIPPED"
-        current_skipped = check["conclusion"] == "SKIPPED"
-        if current_skipped and not previous_skipped:
-            continue
-        if previous_skipped and not current_skipped:
-            latest[check["name"]] = check
-            continue
-        if check["timestamp"] >= previous["timestamp"]:
-            latest[check["name"]] = check
+        latest[check["name"]] = select_preferred_check(latest.get(check["name"]), check)
     return sorted(latest.values(), key=lambda item: item["name"])
 
 
@@ -192,7 +231,10 @@ def summarize_checks(raw_checks):
     failed = [check for check in active if check["result"] == "fail"]
     passed = [check for check in active if check["result"] == "pass"]
     ignored = [check for check in checks if check["ignored"]]
-    fin_review = next((check for check in checks if check["name"] == FIN_REVIEW_CHECK), None)
+    fin_review = None
+    for check in checks:
+        if check["name"] in FIN_REVIEW_CHECKS:
+            fin_review = select_preferred_check(fin_review, check)
     return {
         "all_passing": not pending and not failed,
         "pending_count": len(pending),
@@ -243,7 +285,9 @@ def normalize_review(review):
         "author": reviewer_login(review.get("author") or review.get("user")),
         "body": str(review.get("body") or ""),
         "commit_sha": str(commit_sha),
-        "created_at": str(review.get("submittedAt") or review.get("submitted_at") or ""),
+        "created_at": str(
+            review.get("submittedAt") or review.get("submitted_at") or ""
+        ),
         "url": str(review.get("html_url") or ""),
     }
 
@@ -263,7 +307,110 @@ def normalize_review_comment(comment):
     }
 
 
-def fetch_fin_review(pr, state):
+def parse_timestamp(value):
+    text = str(value or "").strip()
+    if not text:
+        return None
+    if text.endswith("Z"):
+        text = text[:-1] + "+00:00"
+    try:
+        dt = datetime.fromisoformat(text)
+    except ValueError:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.timestamp()
+
+
+def is_fin_review_request_comment(comment):
+    if not isinstance(comment, dict):
+        return False
+    body = str(comment.get("body") or "")
+    return any(
+        re.fullmatch(r"fin\s+review", line.strip(), re.IGNORECASE)
+        for line in body.splitlines()
+    )
+
+
+def latest_fin_review_request_at(comments):
+    latest_raw = None
+    latest_ts = None
+    for comment in comments or []:
+        if not is_fin_review_request_comment(comment):
+            continue
+        raw = str(comment.get("createdAt") or comment.get("created_at") or "")
+        ts = parse_timestamp(raw)
+        if ts is None:
+            continue
+        if latest_ts is None or ts >= latest_ts:
+            latest_ts = ts
+            latest_raw = raw
+    return latest_raw, latest_ts
+
+
+def head_commit_timestamp(commits, head_sha):
+    matched = None
+    for commit in commits or []:
+        if not isinstance(commit, dict):
+            continue
+        if head_sha and str(commit.get("oid") or "") == head_sha:
+            matched = commit
+            break
+    if matched is None and commits:
+        last = commits[-1]
+        if isinstance(last, dict):
+            matched = last
+    if not matched:
+        return None
+    return parse_timestamp(matched.get("committedDate") or matched.get("authoredDate"))
+
+
+def check_activity_timestamp(check):
+    if not check:
+        return None
+    candidates = [
+        ts
+        for ts in (
+            parse_timestamp(check.get("timestamp")),
+            parse_timestamp(check.get("completed_at")),
+        )
+        if ts is not None
+    ]
+    return max(candidates) if candidates else None
+
+
+def evaluate_fin_review_request(
+    pr,
+    fin_check,
+    fin_review_items,
+    now=None,
+    grace_seconds=FIN_REVIEW_REQUEST_GRACE_SECONDS,
+):
+    latest_request_raw, request_ts = latest_fin_review_request_at(pr.get("comments"))
+    if request_ts is None:
+        return {"latest_request_at": None, "request_pending": False}
+
+    current_time = time.time() if now is None else now
+    if current_time - request_ts > grace_seconds:
+        return {"latest_request_at": latest_request_raw, "request_pending": False}
+
+    head_ts = head_commit_timestamp(pr.get("commits"), pr.get("head_sha"))
+    if head_ts is not None and request_ts < head_ts:
+        return {"latest_request_at": latest_request_raw, "request_pending": False}
+
+    fin_check_ts = check_activity_timestamp(fin_check)
+    if fin_check_ts is not None and fin_check_ts >= request_ts:
+        return {"latest_request_at": latest_request_raw, "request_pending": False}
+
+    for item in fin_review_items:
+        item_ts = parse_timestamp(item.get("created_at"))
+        if item_ts is not None and item_ts >= request_ts:
+            return {"latest_request_at": latest_request_raw, "request_pending": False}
+
+    return {"latest_request_at": latest_request_raw, "request_pending": True}
+
+
+def fetch_fin_review(pr, state, fin_check=None, now=None):
     comments = gh_api_list_paginated(
         f"repos/{pr['repo']}/pulls/{pr['number']}/comments?per_page=100"
     )
@@ -277,12 +424,12 @@ def fetch_fin_review(pr, state):
         normalize_review(item)
         for item in pr["reviews"]
         if isinstance(item, dict)
-        and reviewer_login(item.get("author") or item.get("user"))
-        in FIN_REVIEW_LOGINS
+        and reviewer_login(item.get("author") or item.get("user")) in FIN_REVIEW_LOGINS
     ]
+    all_items = review_comments + reviews
     seen = {str(item) for item in state.get("seen_fin_review_item_ids") or []}
     new_items = []
-    for item in review_comments + reviews:
+    for item in all_items:
         if not item["id"] or item["id"] in seen or not item["body"].strip():
             continue
         new_items.append(item)
@@ -294,10 +441,13 @@ def fetch_fin_review(pr, state):
         for review in reviews
         if review["commit_sha"] == pr["head_sha"] and "lgtm" in review["body"].lower()
     ]
+    request_status = evaluate_fin_review_request(pr, fin_check, all_items, now=now)
     return {
         "lgtm_for_head": bool(lgtm_reviews),
         "latest_lgtm": lgtm_reviews[-1] if lgtm_reviews else None,
         "new_items": new_items,
+        "latest_request_at": request_status["latest_request_at"],
+        "request_pending": request_status["request_pending"],
     }
 
 
@@ -346,31 +496,37 @@ def recommend_actions(pr, checks, fin_review):
         actions.append("process_fin_review_findings")
 
     generic_failures = [
-        check for check in checks["failed"] if check["name"] != FIN_REVIEW_CHECK
+        check for check in checks["failed"] if check["name"] not in FIN_REVIEW_CHECKS
     ]
     if generic_failures:
         actions.append("diagnose_ci_failure")
 
+    request_pending = bool(fin_review.get("request_pending"))
     fin_review_unavailable = (
         pr["is_draft"]
         and fin_check is not None
         and fin_check["conclusion"] == "SKIPPED"
         and not fin_review["lgtm_for_head"]
         and not findings
+        and not request_pending
     )
 
     if fin_review_unavailable:
         if checks["all_passing"]:
             actions.append("report_fin_review_unavailable")
-    elif fin_check is None:
-        actions.append("request_fin_review" if pr["is_draft"] else "wait_for_fin_review")
-    elif fin_check["result"] == "pending":
+    elif fin_check is not None and fin_check["result"] == "pending":
         actions.append("wait_for_fin_review")
-    elif fin_check["result"] == "fail" and not findings:
+    elif request_pending and not fin_review["lgtm_for_head"] and not findings:
+        actions.append("wait_for_fin_review")
+    elif fin_check is not None and fin_check["result"] == "fail" and not findings:
         actions.append("inspect_or_rerun_fin_review")
-    elif fin_check.get("conclusion") != "SUCCESS" and not findings:
-        actions.append("request_fin_review")
-    elif not fin_review["lgtm_for_head"] and not findings:
+    elif fin_review["lgtm_for_head"] or findings:
+        pass
+    elif fin_check is None:
+        actions.append(
+            "request_fin_review" if pr["is_draft"] else "wait_for_fin_review"
+        )
+    else:
         actions.append("request_fin_review")
 
     if checks["pending_count"] and "wait_for_checks" not in actions:
@@ -387,7 +543,9 @@ def collect_snapshot(args):
     if state.get("head_sha") != pr["head_sha"]:
         state["head_sha"] = pr["head_sha"]
     checks = summarize_checks(pr.pop("checks"))
-    fin_review = fetch_fin_review(pr, state)
+    fin_review = fetch_fin_review(pr, state, fin_check=checks["fin_review"])
+    pr.pop("comments", None)
+    pr.pop("commits", None)
     actions = recommend_actions(pr, checks, fin_review)
     state["last_snapshot_at"] = int(time.time())
     save_state(state_path, state)
@@ -417,17 +575,22 @@ def snapshot_key(snapshot):
     )
 
 
+def is_actionable(actions):
+    return any(action not in WAIT_ACTIONS for action in actions)
+
+
 def run_watch(args):
     previous = None
     while True:
         snapshot = collect_snapshot(args)
         current = snapshot_key(snapshot)
-        print_json({"event": "snapshot", "changed": current != previous, "payload": snapshot})
-        if any(
-            action in snapshot["actions"]
-            for action in ("ready_for_review", "report_fin_review_unavailable", "stop_pr_closed")
-        ):
-            print_json({"event": "stop", "actions": snapshot["actions"], "pr": snapshot["pr"]})
+        print_json(
+            {"event": "snapshot", "changed": current != previous, "payload": snapshot}
+        )
+        if is_actionable(snapshot["actions"]):
+            print_json(
+                {"event": "stop", "actions": snapshot["actions"], "pr": snapshot["pr"]}
+            )
             return 0
         previous = current
         time.sleep(args.poll_seconds)
